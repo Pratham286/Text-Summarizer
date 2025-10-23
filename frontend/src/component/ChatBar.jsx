@@ -28,7 +28,6 @@ const ChatBar = ({isMenuOpen, setIsMenuOpen}) => {
     }, [isLogin, url])
 
    const handleClick = (chatId) => {
-    // console.log("clicked");
     navigate('/textsummary', { 
         state: chatId,
         replace: true 

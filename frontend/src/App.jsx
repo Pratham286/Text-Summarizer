@@ -42,7 +42,7 @@ function App() {
         <Header />
       </div>
 
-      <div className="flex flex-1 overflow-hidden relative z-20">
+      <div className="flex flex-1 overflow-hidden relative z-100">
         {/* Desktop Sidebar - Only render when logged in */}
         {isLogin && (
           <div 

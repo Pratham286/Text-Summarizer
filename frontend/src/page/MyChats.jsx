@@ -12,7 +12,7 @@ const MyChats = () => {
 
   const handleChatClick = (chatId) => {
     navigate('/textsummary', { state: chatId });
-  };
+  }; 
 
   useEffect(() => {
     const getMyChat = async () => {

@@ -2,12 +2,13 @@ import React from 'react';
 import { FaRocket, FaBrain, FaComments, FaHeart, FaStar, FaArrowRight, FaCheckCircle } from 'react-icons/fa';
 import { HiChatBubbleLeftRight, HiSparkles } from 'react-icons/hi2';
 import { IoMdStats } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
+import { useMyContext } from '../context/MyContext';
 
 const Home = () => {
-  // Mock user state - set to null to see non-logged in view, or add object to see logged in view
-  const user = null; // Change to { username: "John" } to test logged in state
-  const navigate = (path) => console.log(`Navigate to: ${path}`);
-
+  const { user, url } = useMyContext();
+  const navigate = useNavigate();
+  
   const features = [
     {
       icon: FaBrain,
@@ -42,9 +43,9 @@ const Home = () => {
     <div className="min-h-screen relative overflow-hidden bg-slate-950">
       <div className="relative z-10">
         {/* Hero Section */}
-        <section className="pt-20 pb-32 px-4">
+        <section className="pt-20 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="mb-16">
+            <div className="">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-full border border-slate-700 mb-8">
                 <HiSparkles className="h-4 w-4 text-slate-400" />
                 <span className="text-slate-300 text-sm font-medium">Powered by Advanced AI</span>
@@ -66,7 +67,7 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 {user ? (
                   <button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate('/')}
                     className="group px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transition-all duration-200 flex items-center gap-2 border border-slate-700"
                   >
                     Go to Dashboard
@@ -94,7 +95,7 @@ const Home = () => {
             </div>
 
             {/* Stats Section */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+            {/* <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
               {stats.map((stat, index) => (
                 <div key={index} className="bg-slate-900 rounded-lg p-6 border border-slate-800">
                   <div className="flex items-center justify-center mb-3">
@@ -104,7 +105,7 @@ const Home = () => {
                   <div className="text-slate-400 text-sm">{stat.label}</div>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
         </section>
 

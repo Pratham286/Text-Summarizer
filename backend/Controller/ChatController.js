@@ -4,21 +4,18 @@ import { Message } from "../Schema/Message.js";
 import { User } from "../Schema/User.js";
 import { insArr } from "../Data/Instruction.js";
 
-
-
 export const createChatForSummary = async (req, res) => {
   try {
     const user = req.user;
     const userId = user.id;
-    const {summaryType} = req.body;
+    const { summaryType } = req.body;
     const newChat = new Chat({
       chatUser: userId,
       chatMessage: [],
     });
-    const index = insArr.findIndex(item => item.type === summaryType);
-    if(index === -1)
-    {
-      return res.status(404).json({message: "Invalid Summary type"});
+    const index = insArr.findIndex((item) => item.type === summaryType);
+    if (index === -1) {
+      return res.status(404).json({ message: "Invalid Summary type" });
     }
     const systemMessage = new Message({
       messageContent: insArr[index].prompt,
@@ -209,17 +206,33 @@ export const getFavChat = async (req, res) => {
     const userDetails = await User.findById(userId);
     const userFav = userDetails.favouriteChat;
     // console.log(userFav[0]);
-    const chats = await Chat.find({ _id: { $in: userFav} }).populate({
+    const chats = await Chat.find({ _id: { $in: userFav } })
+      .populate({
         path: "chatMessage",
         select: "messageContent messageRole messageType chat messageUser",
       })
-      .sort({ updatedAt: -1 });;
+      .sort({ updatedAt: -1 });
     // console.log(chats);
-    return res.status(200).json({ message: "Fetched favourites", chats});
+    return res.status(200).json({ message: "Fetched favourites", chats });
   } catch (error) {
     console.log("Error in fetching favourite chat, Error: ", error);
     return res
       .status(500)
       .json({ message: "Error in fetching favourite chat" });
+    }
+  };
+  
+  export const deleteEmptyChat = async (req, res) => {
+    try {
+      const result = await Chat.deleteMany({
+        chatMessage : {$size : 1}
+      });
+      
+      return res.status(200).json({message : "No data chat deleted"});
+    } catch (error) {
+      console.log("Error in deleting chats", error);
+      return res
+        .status(500)
+        .json({ message: "Error in deleting chats" });
   }
 };

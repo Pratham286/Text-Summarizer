@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useMyContext } from "../context/MyContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const dataArr = [
@@ -18,7 +19,18 @@ const Dashboard = () => {
   const { user, isLogin, url } = useMyContext();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  // console.log(isLogin)
+  useEffect(() =>{
+    const deleteEmptyChat = async () =>  {
+      try {
+        const response = await axios.delete(`${url}/chat/deleteEmptyChats`, {withCredentials : true});
+        console.log(response);
+      } catch (error) {
+        console.log("Error in deleting empty chats, Error: ", error);
+      }
+    }
+    deleteEmptyChat();
+  },[])
   const handleCreateChatSummary = async (txt) => {
     setLoading(true);
     try {
@@ -36,13 +48,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-slate-950">
-
-      {/* Background overlay for modal */}
-      {selectTopic && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-lg z-40"></div>
-      )}
-
+    <div className="min-h-screen relative overflow-hidden bg-slate-950 z-0">
       {/* Header Section */}
       <div className="relative pt-20 pb-16 z-10">
         <div className="text-center max-w-4xl mx-auto px-6">
@@ -138,63 +144,81 @@ const Dashboard = () => {
 
       {/* Enhanced Modal with glass morphism */}
       {selectTopic && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md"></div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop with blur */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-md z-[100]"
+            onClick={() => !loading && setSelectTopic(false)}
+          >          </div>
           
-          <div className="relative transform transition-all max-h-[90vh] overflow-hidden">
+          {/* Modal Container */}
+          <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col z-[101]">
             {/* Modal glow effect */}
-            <div className="absolute -inset-2 bg-slate-800 rounded-3xl blur opacity-20 animate-pulse"></div>
+            <div className="absolute -inset-1 bg-slate-700/20 rounded-3xl blur opacity-50"></div>
             
-            <div className="relative bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl max-w-3xl w-full mx-auto">
+            {/* Modal Content */}
+            <div className="relative bg-slate-900/95 backdrop-blur-2xl border border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
               
-              {/* Enhanced Header */}
-              <div className="px-10 pt-10 pb-8 border-b border-slate-800 bg-slate-900/50">
-                <div className="flex items-center justify-center mb-6">
-                  <div className="relative w-16 h-16">
-                    <div className="absolute inset-0 bg-slate-700 rounded-2xl blur opacity-50 animate-pulse"></div>
-                    <div className="relative w-full h-full bg-slate-800 rounded-xl flex items-center justify-center shadow-lg border border-slate-700">
-                      <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
+              {/* Header - Fixed */}
+              <div className="px-8 pt-8 pb-6 border-b border-slate-800/50 bg-slate-900/80 flex-shrink-0">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center flex-1">
+                    <div className="relative w-12 h-12 mr-4 flex-shrink-0">
+                      <div className="w-full h-full bg-slate-800 rounded-xl flex items-center justify-center border border-slate-700/50">
+                        <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white mb-1">
+                        Choose Summary Type
+                      </h2>
+                      <p className="text-slate-400 text-sm">
+                        Select the format that best suits your needs
+                      </p>
                     </div>
                   </div>
+                  
+                  {/* Close button in header */}
+                  <button
+                    onClick={() => setSelectTopic(false)}
+                    disabled={loading}
+                    className="ml-4 p-2 rounded-lg hover:bg-slate-800/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                    aria-label="Close modal"
+                  >
+                    <svg className="w-5 h-5 text-slate-400 hover:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
-                <h2 className="text-4xl font-bold text-white text-center mb-3">
-                  Choose Summary Type
-                </h2>
-                <p className="text-slate-300 text-center text-lg">
-                  Select the format that best suits your needs
-                </p>
               </div>
 
-              {/* Enhanced Options */}
-              <div className="px-10 py-8 max-h-96 overflow-y-auto">
-                <div className="grid grid-cols-1 gap-4">
+              {/* Scrollable Options */}
+              <div className="px-8 py-6 overflow-y-auto flex-1">
+                <div className="grid grid-cols-1 gap-3">
                   {dataArr.map((item, i) => (
                     <button
                       key={i}
                       onClick={() => handleCreateChatSummary(item.value)}
                       disabled={loading}
-                      className="group relative w-full px-8 py-6 text-left bg-slate-800/50 hover:bg-slate-700/60 backdrop-blur-sm border border-slate-700 hover:border-slate-600 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-slate-700/20 transform hover:scale-[1.02] hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0"
+                      className="group relative w-full px-6 py-4 text-left bg-slate-800/40 hover:bg-slate-700/50 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {/* Button glow effect */}
-                      <div className="absolute -inset-1 bg-slate-700/20 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-opacity duration-300"></div>
-                      
                       <div className="relative flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span className="text-2xl mr-4 filter drop-shadow-lg">{item.icon}</span>
-                          <div>
-                            <span className="text-xl font-bold text-white group-hover:text-slate-200 block mb-2 transition-colors duration-300">
+                        <div className="flex items-center flex-1 min-w-0">
+                          <span className="text-2xl mr-3 flex-shrink-0">{item.icon}</span>
+                          <div className="min-w-0 flex-1">
+                            <span className="text-lg font-bold text-white group-hover:text-slate-100 block mb-1">
                               {item.label}
                             </span>
-                            <span className="text-slate-400 group-hover:text-slate-300 transition-colors duration-300">
+                            <span className="text-sm text-slate-400 group-hover:text-slate-300 block">
                               {item.description}
                             </span>
                           </div>
                         </div>
-                        <div className="w-8 h-8 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2">
+                        <div className="w-6 h-6 ml-3 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                           <svg
-                            className="w-8 h-8 text-slate-400"
+                            className="w-full h-full text-slate-400"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -213,15 +237,15 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Enhanced Footer */}
-              <div className="px-10 pb-10 border-t border-slate-800 bg-slate-900/30">
+              {/* Footer - Fixed */}
+              <div className="px-8 py-6 border-t border-slate-800/50 bg-slate-900/80 flex-shrink-0">
                 <button
                   onClick={() => setSelectTopic(false)}
                   disabled={loading}
-                  className="group w-full px-8 py-5 mt-6 text-slate-300 hover:text-white bg-slate-800/50 hover:bg-slate-700/60 border border-slate-700 hover:border-slate-600 rounded-2xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="w-full px-6 py-3 text-slate-300 hover:text-white bg-slate-800/50 hover:bg-slate-700/60 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="flex items-center justify-center">
-                    <svg className="w-5 h-5 mr-2 transform group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                     Cancel

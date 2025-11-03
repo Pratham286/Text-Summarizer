@@ -72,7 +72,7 @@ const ChatBar = ({isMenuOpen, setIsMenuOpen}) => {
                           <div onClick={() => {handleClick(chat._id)}} className="p-5">
                             <div className="flex items-center justify-between">
                               <div className="flex-1 min-w-0">
-                                {chat.chatMessage.length <= 1 ? (
+                                {chat.chatMessages.length <= 1 ? (
                                   <div className="flex items-center">
                                     <div className="w-3 h-3 bg-slate-600 rounded-full mr-3 shadow-lg animate-pulse"></div>
                                     <div>

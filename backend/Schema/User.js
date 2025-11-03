@@ -15,7 +15,6 @@ const UserSchema = new Schema({
         trim: true,
         type: String,
         unique: true,
-        // unique: true,
     },
     email : {
         required: true,
@@ -29,14 +28,26 @@ const UserSchema = new Schema({
         type: String,
         minlength : 6,
     },
-    userChat: [{
+    userChats : [{
         type: Schema.Types.ObjectId,
         ref: "Chat"
     }],
-    favouriteChat: [{
+    favouriteChats : [{
         type: Schema.Types.ObjectId,
         ref: "Chat"
-    }]
+    }],
+    friends : [{
+        type: Schema.Types.ObjectId,
+        ref : "User"
+    }],
+    pendingFriendReq : [{
+        type: Schema.Types.ObjectId,
+        ref : "User"
+    }],
+    pendingFriendReqSent : [{ 
+    type: Schema.Types.ObjectId,
+    ref : "User"
+    }],
 
 }, {timestamps: true});
 

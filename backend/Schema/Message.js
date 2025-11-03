@@ -3,7 +3,6 @@ import mongoose, { model, Schema } from "mongoose";
 const MessageSchema = new Schema({
     messageContent : {
         type: String,
-        required: true, 
         trim: true,
     },
     messageRole : {
@@ -24,6 +23,10 @@ const MessageSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
+    },
+    isDeleted : {
+        type :  Boolean,
+        default : false
     }
 }, {timestamps: true});
 

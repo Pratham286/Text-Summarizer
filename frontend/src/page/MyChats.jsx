@@ -170,7 +170,7 @@ const MyChats = () => {
                                 </span>
                               </div>
                               
-                              {chat.chatMessage.length <= 1 ? (
+                              {chat.chatMessages.length <= 1 ? (
                                 <div className="space-y-3">
                                   <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
@@ -185,11 +185,11 @@ const MyChats = () => {
                                   <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                                     <p className="text-slate-400 text-sm font-medium">
-                                      {chat.chatMessage.length} messages
+                                      {chat.chatMessages.length} messages
                                     </p>
                                   </div>
                                   <p className="text-slate-200 text-lg leading-relaxed line-clamp-3 group-hover:text-white transition-colors duration-300">
-                                    {chat.chatMessage[1].messageContent}
+                                    {chat.chatMessages[1].messageContent}
                                   </p>
                                 </div>
                               )}

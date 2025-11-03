@@ -183,7 +183,7 @@ const FavChat = () => {
                                   </div>
                                 </div>
                                 
-                                {chat.chatMessage.length <= 1 ? (
+                                {chat.chatMessages.length <= 1 ? (
                                   <div className="space-y-3">
                                     <div className="flex items-center gap-2">
                                       <div className="w-3 h-3 bg-slate-500 rounded-full"></div>
@@ -202,11 +202,11 @@ const FavChat = () => {
                                       <div className="w-3 h-3 bg-slate-400 rounded-full"></div>
                                       <p className="text-slate-400 text-sm font-medium flex items-center gap-2">
                                         {/* <FaMessage className="h-3 w-3" /> */}
-                                        {chat.chatMessage.length} messages • Favorited
+                                        {chat.chatMessages.length} messages • Favorited
                                       </p>
                                     </div>
                                     <p className="text-slate-200 text-lg leading-relaxed line-clamp-3 group-hover:text-white transition-colors duration-300">
-                                      {chat.chatMessage[1].messageContent}
+                                      {chat.chatMessages[1].messageContent}
                                     </p>
                                   </div>
                                 )}
@@ -220,7 +220,7 @@ const FavChat = () => {
                                   <div className="absolute -inset-1 bg-slate-600 rounded-2xl blur opacity-0 group-hover/btn:opacity-50 transition-opacity duration-300"></div>
                                   <span className="relative z-10 flex items-center gap-2">
                                     <FaHeart className="h-3 w-3" />
-                                    {chat.chatMessage.length <= 1 ? 'Start Favorite' : 'Continue'}
+                                    {chat.chatMessages.length <= 1 ? 'Start Favorite' : 'Continue'}
                                   </span>
                                   <FaArrowRight className="relative z-10 h-4 w-4 transform group-hover/btn:translate-x-1 transition-transform duration-300" />
                                 </button>

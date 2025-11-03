@@ -63,7 +63,7 @@ const TextSummary = () => {
           { withCredentials: true }
         );
         setChatData(response.data.chatDetails);
-        setMessageData(response.data.chatDetails.chatMessage.slice(1));
+        setMessageData(response.data.chatDetails.chatMessages.slice(1));
       } catch (error) {
         console.log("Error in fetching chat, Error: ", error);
       }

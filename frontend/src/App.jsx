@@ -51,10 +51,10 @@ function App() {
             {/* Sidebar backdrop blur effect */}
             <div className="absolute inset-0 bg-slate-900 backdrop-blur-sm border-r border-slate-800"></div>
             <div className="relative z-10">
-              <ChatBar 
+              {/* <ChatBar 
                 isMenuOpen={isMenuOpen} 
                 setIsMenuOpen={setIsMenuOpen} 
-              />
+              /> */}
             </div>
           </div>
         )}
@@ -71,10 +71,10 @@ function App() {
             {/* Sidebar with enhanced styling */}
             <div className="absolute left-0 top-0 h-full w-80 transform transition-transform duration-500 ease-out">
               <div className="h-full bg-slate-900 backdrop-blur-md border-r border-slate-800 shadow-2xl">
-                <ChatBar 
+                {/* <ChatBar 
                   isMenuOpen={isMenuOpen} 
                   setIsMenuOpen={setIsMenuOpen} 
-                />
+                /> */}
               </div>
             </div>
           </div>

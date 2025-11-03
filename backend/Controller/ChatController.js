@@ -10,8 +10,10 @@ export const createChatForSummary = async (req, res) => {
     const userId = user.id;
     const { summaryType } = req.body;
     const newChat = new Chat({
-      chatUser: userId,
-      chatMessage: [],
+      chatUsers: [userId],
+      chatMessages: [],
+      isGroupChat : false,
+      createdBy : userId,
     });
     const index = insArr.findIndex((item) => item.type === summaryType);
     if (index === -1) {
@@ -28,11 +30,11 @@ export const createChatForSummary = async (req, res) => {
     // await systemMessage.save();
     await Promise.all([newChat.save(), systemMessage.save()]); // Atomicity and consistency.
 
-    newChat.chatMessage.push(systemMessage._id);
+    newChat.chatMessages.push(systemMessage._id);
     await newChat.save();
     // console.log(chatDetails)
     const chatDetails = await newChat.populate({
-      path: "chatMessage",
+      path: "chatMessages",
       select: "messageContent messageRole messageType",
     });
     return res
@@ -50,7 +52,7 @@ export const getChat = async (req, res) => {
   try {
     const { chatId } = req.body;
     const chatDetails = await Chat.findById(chatId).populate({
-      path: "chatMessage",
+      path: "chatMessages",
       select: "messageContent messageRole messageType chat messageUser",
     });
     return res
@@ -67,9 +69,9 @@ export const getUserChat = async (req, res) => {
   try {
     const user = req.user;
     const userId = user.id;
-    const chatDetails = await Chat.find({ chatUser: userId })
+    const chatDetails = await Chat.find({ chatUsers: userId })
       .populate({
-        path: "chatMessage",
+        path: "chatMessages",
         select: "messageContent messageRole messageType chat messageUser",
       })
       .sort({ updatedAt: -1 });
@@ -99,11 +101,11 @@ export const addTextMsg = async (req, res) => {
     const chatMsg = await Chat.findByIdAndUpdate(
       chatId,
       {
-        $push: { chatMessage: userMessage._id },
+        $push: { chatMessages: userMessage._id },
       },
       { new: true }
     ).populate({
-      path: "chatMessage",
+      path: "chatMessages",
       select: "messageContent messageRole messageType",
     });
 
@@ -111,15 +113,50 @@ export const addTextMsg = async (req, res) => {
 
     const cohere = new CohereClientV2({ token: cohereAPI });
 
-    const msgArr = [{}];
-    for (let i = 0; i < chatMsg.chatMessage.length; i++) {
-      msgArr.push({
-        role: chatMsg.chatMessage[i].messageRole,
-        content: chatMsg.chatMessage[i].messageContent,
-      });
-    }
-    msgArr.shift();
+    // app.get("/cohere", async (req, res) => {
+//   try {
+//     const response = await cohere.chat({
+//       model: "command-a-03-2025",
+//       messages: [
+//         {
+//           role: "system",
+//           content: "You respond in concise sentences.",
+//         },
+//         { role: "user", content: "Hello" },
+//         {
+//           role: "assistant",
+//           content: "Hi, how can I help you today?",
+//         },
+//         {
+//           role: "user",
+//           content: "I Don't want your help",
+//         },
+//       ],
+//     });
+//     console.log(response.message);
+//     console.log(response.message.content[0].text);
+
+//     return res.status(200);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
+    // const msgArr = [{}];
+    // for (let i = 0; i < chatMsg.chatMessages.length; i++) {
+    //   msgArr.push({
+    //     role: chatMsg.chatMessages[i].messageRole,
+    //     content: chatMsg.chatMessages[i].messageContent,
+    //   });
+    // }
+    // msgArr.shift();
     // console.log(msgArr)
+
+    const msgArr = chatMsg.chatMessages.map(m => ({
+    role: m.messageRole,
+    content: m.messageContent,
+    }));
+    
     const response = await cohere.chat({
       model: "command-a-03-2025",
       messages: msgArr,
@@ -137,11 +174,11 @@ export const addTextMsg = async (req, res) => {
     const assistantchat = await Chat.findByIdAndUpdate(
       chatId,
       {
-        $push: { chatMessage: assistantMessage._id },
+        $push: { chatMessages: assistantMessage._id },
       },
       { new: true }
     ).populate({
-      path: "chatMessage",
+      path: "chatMessages",
       select: "messageContent messageRole messageType",
     });
 
@@ -180,7 +217,7 @@ export const addToFav = async (req, res) => {
     const temp = await User.findByIdAndUpdate(
       userId,
       {
-        $push: { favouriteChat: chatId },
+        $push: { favouriteChats: chatId },
       },
       {
         new: true,
@@ -198,17 +235,17 @@ export const getFavChat = async (req, res) => {
     const userId = user.id;
 
     // const userDetails = await User.findById(userId).populate({
-    //   path: "favouriteChat",
-    //   select: "chatMessage",
-    //   // path: "chatMessage",
+    //   path: "favouriteChats",
+    //   select: "chatMessages",
+    //   // path: "chatMessages",
     //   // select: "messageContent messageRole messageType chat messageUser",
     // });
     const userDetails = await User.findById(userId);
-    const userFav = userDetails.favouriteChat;
+    const userFav = userDetails.favouriteChats;
     // console.log(userFav[0]);
     const chats = await Chat.find({ _id: { $in: userFav } })
       .populate({
-        path: "chatMessage",
+        path: "chatMessages",
         select: "messageContent messageRole messageType chat messageUser",
       })
       .sort({ updatedAt: -1 });
@@ -225,7 +262,7 @@ export const getFavChat = async (req, res) => {
   export const deleteEmptyChat = async (req, res) => {
     try {
       const result = await Chat.deleteMany({
-        chatMessage : {$size : 1}
+        chatMessages : {$size : 1}
       });
       
       return res.status(200).json({message : "No data chat deleted"});

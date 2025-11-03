@@ -4,10 +4,10 @@ import { verify } from "../Middleware/verifyAuth.js";
 
 const router = express.Router();
 
-router.get("/verify", verify , checkUser)
+router.get("/verify", verify , checkUser) // For Authorization Checking.
 router.post("/signup", signup)
 router.post("/login", login)
-router.get("/logout", verify,logout)
+router.get("/logout", verify, logout)
 
 
 export default router;

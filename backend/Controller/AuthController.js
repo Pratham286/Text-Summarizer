@@ -15,7 +15,12 @@ export const signup = async (req, res) => {
         const user =await User.findOne({email : email});
         if(user)
         {
-            return res.status(400).json( {message : "This Email is aldready registered. Please try another email"})
+            return res.status(400).json( {message : "This Email is already registered. Please try another email"})
+        }
+        const existingUserName = await User.findOne({username : username});
+        if(existingUserName)
+        {
+            return res.status(400).json({message : "This username is already registered. Please try another username"});
         }
         const newUser = new User({
             fName: fName,
@@ -23,6 +28,11 @@ export const signup = async (req, res) => {
             username: username,
             email: email,
             password: hashPassword,
+                userChats: [],           
+                favouriteChats: [],      
+                friends: [],             
+                pendingFriendReq: [],    
+                pendingFriendReqSent: [], 
         })
         await newUser.save();
         return res.status(200).json({message: "New User Created"});
@@ -40,6 +50,7 @@ export const login = async (req, res) => {
         {
             return res.status(400).json( {message : "Email is not register."})
         }
+        
         const check = await bcrypt.compare(password, user.password)
         if(!check)
         {
@@ -80,9 +91,9 @@ export const logout = async (req, res) => {
 export const checkUser = async (req, res) => {
     try {
         const user = req.user;
-        // console.log(userId);
+        // console.log(user);
         return res.status(200).json({message: "Verified.", userDetails: user})
     } catch (error) {
-        console.log("Failed in logout, Error: ", error);
+        console.log("Failed in verify user, Error: ", error);
     }
 }

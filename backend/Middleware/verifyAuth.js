@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 
 export const verify = async (req, res, next) => {
   try {
+
+    // Using Bearer Token
     // const authHeader = req.headers.authorization;
 
     // if(!authHeader || !authHeader.startsWith("Bearer ")){
@@ -9,13 +11,16 @@ export const verify = async (req, res, next) => {
     // }
 
     // const token = authHeader.split(" ")[1];
+
+
+    
+    // Using Cookies-Token
     const token = req.cookies.token;
 
     const key = process.env.Secret_Key;
     const decoded = jwt.verify(token, key);
     req.user = decoded
     next();
-    return res.status(200);
   } catch (error) {
         console.error("Error verifying token:", error);
     return res.status(401).json({ message: "Invalid or expired token" });

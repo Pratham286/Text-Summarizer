@@ -12,4 +12,8 @@ router.delete("/delete/:id", verify, deleteChat)
 router.post("/addtofav", verify, addToFav)
 router.get("/getfavchat", verify, getFavChat)
 router.delete("/deleteEmptyChats", verify, deleteEmptyChat)
+
+//functions
+
+// createGroupChat
 export default router;

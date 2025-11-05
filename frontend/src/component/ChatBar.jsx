@@ -84,7 +84,7 @@ const ChatBar = ({isMenuOpen, setIsMenuOpen}) => {
                                     <div className="w-3 h-3 bg-slate-600 rounded-full mr-3 mt-1.5 shadow-lg flex-shrink-0"></div>
                                     <div className="min-w-0 flex-1">
                                       <p className="text-slate-200 text-sm line-clamp-2 leading-relaxed font-medium mb-1">
-                                        {chat.chatMessage[1].messageContent}
+                                        {chat.chatMessages[1].messageContent}
                                       </p>
                                     </div>
                                   </div>

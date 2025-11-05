@@ -6,6 +6,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { CohereClientV2 } from "cohere-ai";
 import chatRoute from "./Routes/Chat.js"
+import friendsRoute from "./Routes/Friends.js";
 
 const app = express();
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(cookieParser());
 
 app.use("/auth", authRoute);
 app.use("/chat", chatRoute);
+app.use("/friends", friendsRoute);
 
 const cohereAPI = process.env.Cohere_API;
 

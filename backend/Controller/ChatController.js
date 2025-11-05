@@ -35,7 +35,7 @@ export const createChatForSummary = async (req, res) => {
     // console.log(chatDetails)
     const chatDetails = await newChat.populate({
       path: "chatMessages",
-      select: "messageContent messageRole messageType",
+      select: "messageContent messageRole messageType isDeleted",
     });
     return res
       .status(200)
@@ -53,7 +53,7 @@ export const getChat = async (req, res) => {
     const { chatId } = req.body;
     const chatDetails = await Chat.findById(chatId).populate({
       path: "chatMessages",
-      select: "messageContent messageRole messageType chat messageUser",
+      select: "messageContent messageRole messageType chat messageUser isDeleted",
     });
     return res
       .status(200)
@@ -72,7 +72,7 @@ export const getUserChat = async (req, res) => {
     const chatDetails = await Chat.find({ chatUsers: userId })
       .populate({
         path: "chatMessages",
-        select: "messageContent messageRole messageType chat messageUser",
+        select: "messageContent messageRole messageType chat messageUser isDeleted",
       })
       .sort({ updatedAt: -1 });
     return res
@@ -106,7 +106,7 @@ export const addTextMsg = async (req, res) => {
       { new: true }
     ).populate({
       path: "chatMessages",
-      select: "messageContent messageRole messageType",
+      select: "messageContent messageRole messageType isDeleted",
     });
 
     const cohereAPI = process.env.Cohere_API;
@@ -179,7 +179,7 @@ export const addTextMsg = async (req, res) => {
       { new: true }
     ).populate({
       path: "chatMessages",
-      select: "messageContent messageRole messageType",
+      select: "messageContent messageRole messageType isDeleted",
     });
 
     return (
@@ -238,7 +238,7 @@ export const getFavChat = async (req, res) => {
     //   path: "favouriteChats",
     //   select: "chatMessages",
     //   // path: "chatMessages",
-    //   // select: "messageContent messageRole messageType chat messageUser",
+    //   // select: "messageContent messageRole messageType chat messageUser isDeleted",
     // });
     const userDetails = await User.findById(userId);
     const userFav = userDetails.favouriteChats;
@@ -246,7 +246,7 @@ export const getFavChat = async (req, res) => {
     const chats = await Chat.find({ _id: { $in: userFav } })
       .populate({
         path: "chatMessages",
-        select: "messageContent messageRole messageType chat messageUser",
+        select: "messageContent messageRole messageType chat messageUser isDeleted",
       })
       .sort({ updatedAt: -1 });
     // console.log(chats);

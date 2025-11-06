@@ -13,6 +13,7 @@ import FavChat from "./page/FavChat";
 import ChatBar from "./component/ChatBar";
 import { useState, useEffect } from "react";
 import { useMyContext } from "./context/MyContext";
+import GroupChat from "./page/GroupChat";
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
@@ -42,45 +43,6 @@ function App() {
         <Header />
       </div>
 
-      <div className="flex flex-1 overflow-hidden relative z-100">
-        {/* Desktop Sidebar - Only render when logged in */}
-        {isLogin && (
-          <div 
-            className={`${sidebarWidth} transition-all duration-500 ease-in-out flex-shrink-0 hidden lg:block relative`}
-          >
-            {/* Sidebar backdrop blur effect */}
-            <div className="absolute inset-0 bg-slate-900 backdrop-blur-sm border-r border-slate-800"></div>
-            <div className="relative z-10">
-              <ChatBar 
-                isMenuOpen={isMenuOpen} 
-                setIsMenuOpen={setIsMenuOpen} 
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Mobile sidebar overlay - Only when logged in */}
-        {isLogin && isMenuOpen && (
-          <div className="lg:hidden fixed inset-0 z-50">
-            {/* Enhanced overlay with blur */}
-            <div 
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
-              onClick={() => setIsMenuOpen(false)}
-            />
-            
-            {/* Sidebar with enhanced styling */}
-            <div className="absolute left-0 top-0 h-full w-80 transform transition-transform duration-500 ease-out">
-              <div className="h-full bg-slate-900 backdrop-blur-md border-r border-slate-800 shadow-2xl">
-                <ChatBar 
-                  isMenuOpen={isMenuOpen} 
-                  setIsMenuOpen={setIsMenuOpen} 
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Main content area with enhanced styling */}
         <main className="flex-1 overflow-auto relative">
           {/* Content backdrop */}
           <div className="absolute inset-0 bg-slate-950 backdrop-blur-sm"></div>
@@ -97,12 +59,12 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/mychats" element={<MyChats />} />
                 <Route path="/favchats" element={<FavChat />} />
+                <Route path="/mygroupchats" element = {<GroupChat />}/>
               </Route>
             </Routes>
           </div>
 
         </main>
-      </div>
     
       <div className="relative z-30">
         <Footer />

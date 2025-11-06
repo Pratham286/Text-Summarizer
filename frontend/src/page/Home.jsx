@@ -51,20 +51,20 @@ const Home = () => {
                 <span className="text-slate-300 text-sm font-medium">Powered by Advanced AI</span>
               </div>
               
-              <h1 className="text-5xl lg:text-6xl font-bold text-white mb-6">
+              <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
                 Welcome to{' '}
                 <span className="text-slate-400">
                   AI Chat
                 </span>
               </h1>
               
-              <p className="text-lg lg:text-xl text-slate-400 mb-10 max-w-3xl mx-auto">
+              <p className="text-lg lg:text-lg text-slate-400 mb-10 max-w-3xl mx-auto">
                 Experience the future of conversation with our intelligent AI assistant. 
                 Get instant responses, summarize content, and manage your chats like never before.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-md">
                 {user ? (
                   <button
                     onClick={() => navigate('/')}

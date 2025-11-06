@@ -44,32 +44,38 @@ const Header = () => {
   return (
     <div className="relative bg-slate-950 sticky top-0 z-50 h-16 shadow-lg backdrop-blur-md border-b border-slate-800">
       
-      <div className="relative w-full flex justify-between px-6 items-center mx-auto h-full">
+      <div className="relative w-full flex justify-between px-6 items-center mx-auto h-full ">
         <div
           onClick={handleHomeClick}
-          className="font-bold text-2xl px-3 py-2 font-serif text-white hover:text-slate-300 transition-all duration-300 cursor-pointer transform hover:scale-105"
+          className="font-bold text-xl px-3 py-2 font-serif text-white hover:text-slate-300 transition-all duration-300 cursor-pointer transform hover:scale-105"
         >
           ✨ Text Summarizer
         </div>
         
-        <div className="hidden sm:block">
+        <div className="hidden md:block text-sm">
           {isLogin ? (
             <div className="flex items-center space-x-3">
               <button
+                onClick={() => navigate("/mygroupchats")}
+                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+              >
+              💬 Group Chats
+              </button>
+              <button
                 onClick={() => navigate("/mychats")}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
                 💬 My Chats
               </button>
               <button
                 onClick={() => navigate("/profile")}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
                 👤 My Profile
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
                 🚪 Logout
               </button>
@@ -78,13 +84,13 @@ const Header = () => {
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => navigate("/signup")}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
                 ✨ Sign up
               </button>
               <button
                 onClick={() => navigate("/login")}
-                className="px-4 py-2 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 hover:bg-slate-900"
+                className="px-3 py-2 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 hover:bg-slate-900"
               >
                 🔑 Sign in
               </button>
@@ -92,7 +98,7 @@ const Header = () => {
           )}
         </div>
         
-        <div className="sm:hidden pr-3">
+        <div className="md:hidden pr-3 text-sm">
           <div className="relative">
             {isMenuOpen ? (
               <button 
@@ -115,16 +121,25 @@ const Header = () => {
       
       {/* Mobile Menu with enhanced styling */}
       {isMenuOpen && (
-        <div className="sm:hidden absolute top-full right-4 mt-2 w-48 bg-slate-900 rounded-xl shadow-2xl border border-slate-800 backdrop-blur-md animate-in slide-in-from-top-2 duration-300">
-          <div className="p-4 flex flex-col gap-3">
+        <div className="md:hidden absolute top-full right-4 mt-2 w-48 bg-slate-900 rounded-xl shadow-2xl border border-slate-800 backdrop-blur-md animate-in slide-in-from-top-2 duration-300">
+          <div className="p-4 flex flex-col gap-3 text-sm">
             {isLogin ? (
               <>
+                <button
+                  onClick={() => {
+                    navigate("/mygroupchats");
+                    setIsMenuOpen(false);
+                  }}
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                >
+                  💬 Group Chats
+                </button>
                 <button
                   onClick={() => {
                     navigate("/mychats");
                     setIsMenuOpen(false);
                   }}
-                  className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
                   💬 My Chats
                 </button>
@@ -133,7 +148,7 @@ const Header = () => {
                     navigate("/profile");
                     setIsMenuOpen(false);
                   }}
-                  className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
                   👤 My Profile
                 </button>
@@ -142,7 +157,7 @@ const Header = () => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
                   🚪 Logout
                 </button>
@@ -154,7 +169,7 @@ const Header = () => {
                     navigate("/signup");
                     setIsMenuOpen(false);
                   }}
-                  className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
                   ✨ Sign up
                 </button>
@@ -163,7 +178,7 @@ const Header = () => {
                     navigate("/login");
                     setIsMenuOpen(false);
                   }}
-                  className="px-4 py-3 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left hover:bg-slate-900"
+                  className="px-3 py-2 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left hover:bg-slate-900"
                 >
                   🔑 Sign in
                 </button>

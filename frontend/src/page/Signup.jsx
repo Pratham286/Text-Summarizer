@@ -88,15 +88,15 @@ const Signup = () => {
           {/* Glass background for welcome section */}
           <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm"></div>
           
-          <div className="relative z-10 text-center max-w-md">
+          <div className="relative z-10 text-center max-w-md " >
             <div className="mb-8">
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
+              <h1 className="text-3xl lg:text-4xl font-bold mb-4 leading-tight text-white">
                 Welcome to
                 <span className="block text-slate-400">
                   Text Summarizer
                 </span>
               </h1>
-              <p className="text-lg lg:text-xl text-slate-300 mb-8 leading-relaxed">
+              <p className="text-md text-slate-300 mb-8 leading-relaxed">
                 Join thousands of users who trust us with their digital security. Create your account and start your journey today.
               </p>
             </div>
@@ -128,7 +128,7 @@ const Signup = () => {
               <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
                 Create Your Account
               </h2>
-              <p className="text-slate-300 text-sm lg:text-base">
+              <p className="text-slate-300 text-sm ">
                 Fill in your details to get started
               </p>
             </div>
@@ -147,7 +147,7 @@ const Signup = () => {
                         name="username"
                         value={form.username}
                         onChange={handleChange}
-                        className={`w-full pl-4 pr-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full pl-4 pr-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm  ${
                           errors.username 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600 focus:bg-slate-800/60"
@@ -169,7 +169,7 @@ const Signup = () => {
                         name="firstname"
                         value={form.firstname}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full px-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm  ${
                           errors.firstname 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600"
@@ -189,7 +189,7 @@ const Signup = () => {
                         name="lastname"
                         value={form.lastname}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full px-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm  ${
                           errors.lastname 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600"
@@ -211,7 +211,7 @@ const Signup = () => {
                         name="email"
                         value={form.email}
                         onChange={handleChange}
-                        className={`w-full pl-4 pr-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full pl-4 pr-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm  ${
                           errors.email 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600"
@@ -233,7 +233,7 @@ const Signup = () => {
                         name="password"
                         value={form.password}
                         onChange={handleChange}
-                        className={`w-full pl-4 pr-12 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full pl-4 pr-12 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm  ${
                           errors.password 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600"
@@ -267,7 +267,7 @@ const Signup = () => {
                         name="confirmPassword"
                         value={form.confirmPassword}
                         onChange={handleChange}
-                        className={`w-full pl-4 pr-12 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full pl-4 pr-12 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm  ${
                           errors.confirmPassword 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600"
@@ -297,14 +297,14 @@ const Signup = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center text-sm lg:text-base relative overflow-hidden group ${
+                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center text-sm  relative overflow-hidden group ${
                       isSubmitting
                         ? "bg-slate-600/50 cursor-not-allowed"
                         : "bg-slate-800 hover:bg-slate-700 hover:shadow-lg border border-slate-700 transform hover:-translate-y-0.5"
                     }`}
                   >
                     <div className="absolute inset-0 bg-slate-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative z-10 flex items-center justify-center">
+                    <div className="relative z-10 flex items-center justify-center text-sm">
                       {isSubmitting ? (
                         <>
                           <div className="animate-spin rounded-full h-4 w-4 lg:h-5 lg:w-5 border-b-2 border-white mr-2"></div>
@@ -321,7 +321,7 @@ const Signup = () => {
 
                 {/* Sign In Link */}
                 <div className="text-center pt-4 lg:pt-6 border-t border-slate-800">
-                  <p className="text-slate-300 text-sm lg:text-base">
+                  <p className="text-slate-300 text-sm ">
                     Already have an account?{" "}
                     <button
                       onClick={() => navigate("/login")}

@@ -75,13 +75,13 @@ const Login = () => {
           
           <div className="relative z-10 text-center max-w-md">
             <div className="mb-8">
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
+              <h1 className="text-3xl lg:text-4xl font-bold mb-4 leading-tight text-white">
                 Welcome Back to
                 <span className="block text-slate-400">
                   Text Summarizer
                 </span>
               </h1>
-              <p className="text-lg lg:text-xl text-slate-300 mb-8 leading-relaxed">
+              <p className=" text-slate-300 mb-8 leading-relaxed">
                 Sign in to your account and continue your journey with us. Access your personalized dashboard and tools.
               </p>
             </div>
@@ -113,7 +113,7 @@ const Login = () => {
               <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
                 Sign In
               </h2>
-              <p className="text-slate-300 text-sm lg:text-base">
+              <p className="text-slate-300 text-sm">
                 Enter your credentials to access your account
               </p>
             </div>
@@ -132,7 +132,7 @@ const Login = () => {
                         name="email"
                         value={form.email}
                         onChange={handleChange}
-                        className={`w-full pl-4 pr-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full pl-4 pr-4 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm ${
                           errors.email 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600 focus:bg-slate-800/60"
@@ -154,7 +154,7 @@ const Login = () => {
                         name="password"
                         value={form.password}
                         onChange={handleChange}
-                        className={`w-full pl-4 pr-12 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm lg:text-base ${
+                        className={`w-full pl-4 pr-12 py-3 bg-slate-800/50 border backdrop-blur-sm rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-white placeholder-slate-400 text-sm ${
                           errors.password 
                             ? "border-red-500/50 bg-red-900/20" 
                             : "border-slate-700 hover:border-slate-600"
@@ -195,7 +195,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center text-sm lg:text-base relative overflow-hidden group ${
+                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center text-sm relative overflow-hidden group ${
                       isSubmitting
                         ? "bg-slate-600/50 cursor-not-allowed"
                         : "bg-slate-800 hover:bg-slate-700 hover:shadow-lg border border-slate-700 transform hover:-translate-y-0.5"
@@ -219,7 +219,7 @@ const Login = () => {
 
                 {/* Sign Up Link */}
                 <div className="text-center pt-4 lg:pt-6 border-t border-slate-800">
-                  <p className="text-slate-300 text-sm lg:text-base">
+                  <p className="text-slate-300 text-sm">
                     Don't have an account?{" "}
                     <button
                       onClick={() => navigate("/signup")}

@@ -51,7 +51,6 @@ const Footer = () => {
               aria-label="LinkedIn Profile"
             >
               <FaLinkedin className="h-7 w-7 text-slate-400 group-hover:text-white transition-colors duration-300 relative z-10" />
-              <div className="absolute inset-0 bg-slate-600/0 group-hover:bg-slate-600/20 transition-all duration-300"></div>
             </a>
             <a 
               href="https://github.com/Pratham286"

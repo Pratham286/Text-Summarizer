@@ -56,16 +56,16 @@ const Header = () => {
           {isLogin ? (
             <div className="flex items-center space-x-3">
               <button
-                onClick={() => navigate("/mygroupchats")}
+                onClick={() => navigate("/search")}
                 className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-              💬 Group Chats
+              🔍 Search
               </button>
               <button
-                onClick={() => navigate("/mychats")}
+                onClick={() => navigate("/chat")}
                 className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-                💬 My Chats
+                💬 Chats
               </button>
               <button
                 onClick={() => navigate("/profile")}
@@ -136,12 +136,12 @@ const Header = () => {
                 </button>
                 <button
                   onClick={() => {
-                    navigate("/mychats");
+                    navigate("/chat");
                     setIsMenuOpen(false);
                   }}
                   className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
-                  💬 My Chats
+                  💬 Chats
                 </button>
                 <button
                   onClick={() => {

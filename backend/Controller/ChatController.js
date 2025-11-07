@@ -70,8 +70,10 @@ export const getUserChat = async (req, res) => {
   try {
     const user = req.user;
     const userId = user.id;
-    const chatDetails = await Chat.find({ chatUsers: userId })
-      .populate({
+    const chatDetails = await Chat.find({
+      chatUsers: { $in: [userId] }, 
+      isGroupChat: false,               
+    }).populate({
         path: "chatMessages",
         select:
           "messageContent messageRole messageType chat messageUser isDeleted",
@@ -112,59 +114,59 @@ export const addTextMsg = async (req, res) => {
     });
 
     const cohereAPI = process.env.Cohere_API;
-
+    
     const cohere = new CohereClientV2({ token: cohereAPI });
-
+    
     // app.get("/cohere", async (req, res) => {
-    //   try {
-    //     const response = await cohere.chat({
-    //       model: "command-a-03-2025",
-    //       messages: [
-    //         {
-    //           role: "system",
-    //           content: "You respond in concise sentences.",
-    //         },
-    //         { role: "user", content: "Hello" },
-    //         {
+      //   try {
+        //     const response = await cohere.chat({
+          //       model: "command-a-03-2025",
+          //       messages: [
+            //         {
+              //           role: "system",
+              //           content: "You respond in concise sentences.",
+              //         },
+              //         { role: "user", content: "Hello" },
+              //         {
     //           role: "assistant",
     //           content: "Hi, how can I help you today?",
     //         },
     //         {
-    //           role: "user",
-    //           content: "I Don't want your help",
-    //         },
-    //       ],
-    //     });
-    //     console.log(response.message);
-    //     console.log(response.message.content[0].text);
-
-    //     return res.status(200);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
+      //           role: "user",
+      //           content: "I Don't want your help",
+      //         },
+      //       ],
+      //     });
+      //     console.log(response.message);
+      //     console.log(response.message.content[0].text);
+      
+      //     return res.status(200);
+      //   } catch (error) {
+        //     console.log(error);
+        //   }
     // });
-
+    
     // const msgArr = [{}];
     // for (let i = 0; i < chatMsg.chatMessages.length; i++) {
-    //   msgArr.push({
+      //   msgArr.push({
     //     role: chatMsg.chatMessages[i].messageRole,
     //     content: chatMsg.chatMessages[i].messageContent,
     //   });
     // }
     // msgArr.shift();
     // console.log(msgArr)
-
+    
     const msgArr = chatMsg.chatMessages.map((m) => ({
       role: m.messageRole,
       content: m.messageContent,
     }));
-
+    
     const response = await cohere.chat({
       model: "command-a-03-2025",
       messages: msgArr,
     });
     // console.log(response)
-
+    
     const assistantMessage = new Message({
       messageContent: response.message.content[0].text,
       messageRole: "assistant",
@@ -186,9 +188,9 @@ export const addTextMsg = async (req, res) => {
 
     return (
       res
-        .status(200)
-        // .json({ Message: "Text Added", msgArr, response});
-        .json({ Message: "Text Added", chatDetails: assistantchat })
+      .status(200)
+      // .json({ Message: "Text Added", msgArr, response});
+      .json({ Message: "Text Added", chatDetails: assistantchat })
     );
   } catch (error) {
     console.log("Error in adding text, Error: ", error);
@@ -235,30 +237,30 @@ export const getFavChat = async (req, res) => {
   try {
     const user = req.user;
     const userId = user.id;
-
+    
     // const userDetails = await User.findById(userId).populate({
-    //   path: "favouriteChats",
-    //   select: "chatMessages",
-    //   // path: "chatMessages",
-    //   // select: "messageContent messageRole messageType chat messageUser isDeleted",
-    // });
-    const userDetails = await User.findById(userId);
-    const userFav = userDetails.favouriteChats;
-    // console.log(userFav[0]);
-    const chats = await Chat.find({ _id: { $in: userFav } })
+      //   path: "favouriteChats",
+      //   select: "chatMessages",
+      //   // path: "chatMessages",
+      //   // select: "messageContent messageRole messageType chat messageUser isDeleted",
+      // });
+      const userDetails = await User.findById(userId);
+      const userFav = userDetails.favouriteChats;
+      // console.log(userFav[0]);
+      const chats = await Chat.find({ _id: { $in: userFav } })
       .populate({
         path: "chatMessages",
         select:
           "messageContent messageRole messageType chat messageUser isDeleted",
       })
       .sort({ updatedAt: -1 });
-    // console.log(chats);
-    return res.status(200).json({ message: "Fetched favourites", chats });
-  } catch (error) {
+      // console.log(chats);
+      return res.status(200).json({ message: "Fetched favourites", chats });
+    } catch (error) {
     console.log("Error in fetching favourite chat, Error: ", error);
     return res
-      .status(500)
-      .json({ message: "Error in fetching favourite chat" });
+    .status(500)
+    .json({ message: "Error in fetching favourite chat" });
   }
 };
 
@@ -267,7 +269,7 @@ export const deleteEmptyChat = async (req, res) => {
     const result = await Chat.deleteMany({
       chatMessages: { $size: 1 },
     });
-
+    
     return res.status(200).json({ message: "No data chat deleted" });
   } catch (error) {
     console.log("Error in deleting chats", error);
@@ -300,7 +302,7 @@ export const createGroupChat = async (req, res) => {
     // await newChat.save();
     // await systemMessage.save();
     await Promise.all([newChat.save(), systemMessage.save()]); // Atomicity and consistency.
-
+    
     newChat.chatMessages.push(systemMessage._id);
     await newChat.save();
     // console.log(chatDetails)
@@ -309,9 +311,33 @@ export const createGroupChat = async (req, res) => {
       select: "messageContent messageRole messageType isDeleted",
     });
     return res
-      .status(200)
-      .json({ Message: "Chat Created", chatDetails: chatDetails });
+    .status(200)
+    .json({ Message: "Chat Created", chatDetails: chatDetails });
   } catch (error) {
     return res.status(500).json({ message: "Error in creating group chat" });
+  }
+};
+
+export const getUserGroupChat = async (req, res) => {
+  try {
+    const user = req.user;
+    const userId = user.id;
+    const chatDetails = await Chat.find({
+      chatUsers: { $in: [userId] }, 
+      isGroupChat: true,               
+    }).populate({
+        path: "chatMessages",
+        select:
+          "messageContent messageRole messageType chat messageUser isDeleted",
+      })
+      .sort({ updatedAt: -1 });
+    return res
+      .status(200)
+      .json({ Message: "Fetched Chat", chatDetails: chatDetails });
+  } catch (error) {
+    console.log("Error in fetching chat for summarizer, Error: ", error);
+    return res
+      .status(500)
+      .json({ Message: "Error in fetching chat for summarizer" });
   }
 };

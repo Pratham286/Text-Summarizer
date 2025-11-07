@@ -14,6 +14,9 @@ import ChatBar from "./component/ChatBar";
 import { useState, useEffect } from "react";
 import { useMyContext } from "./context/MyContext";
 import GroupChat from "./page/GroupChat";
+import ChatRouter from "./page/ChatRouter";
+import SearchPage from "./page/SearchPage";
+import UserProfile from "./page/UserProfile";
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
@@ -60,6 +63,9 @@ function App() {
                 <Route path="/mychats" element={<MyChats />} />
                 <Route path="/favchats" element={<FavChat />} />
                 <Route path="/mygroupchats" element = {<GroupChat />}/>
+                <Route path="/chat" element={<ChatRouter />} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/userprofile" element={<UserProfile />} />
               </Route>
             </Routes>
           </div>

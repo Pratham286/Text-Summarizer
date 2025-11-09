@@ -281,12 +281,13 @@ export const createGroupChat = async (req, res) => {
   try {
     const user = req.user;
     const userId = user.id;
-    const { summaryType, usersList } = req.body;
+    const { summaryType, usersList, groupName } = req.body;
     const newChat = new Chat({
       chatUsers: usersList,
       chatMessages: [],
       isGroupChat: true,
       createdBy: userId,
+      chatName: groupName,
     });
     const index = insArr.findIndex((item) => item.type === summaryType);
     if (index === -1) {
@@ -340,4 +341,23 @@ export const getUserGroupChat = async (req, res) => {
       .status(500)
       .json({ Message: "Error in fetching chat for summarizer" });
   }
+};
+export const getUsersOfGroup = async (req, res) => {
+    try {
+       const chatId = req.params.chatId;
+        const chat = await Chat.findById(chatId).populate({
+        path: "chatMessages",
+        select:
+          "messageContent messageRole messageType chat messageUser isDeleted",
+        path: "chatUsers",
+        select: "fName lName username email",
+      });
+        if(!chat)
+        {
+          return res.status(404).json({ message: "Chat not found" });
+        }
+        return res.status(200).json({ message: "Fetched users of group chat", chat });
+    } catch (error) {
+       return res.status(500).json({ message: "Error in fetching users of group chat" });
+    }
 };

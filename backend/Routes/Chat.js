@@ -1,6 +1,6 @@
 import express from "express"
 import { verify } from "../Middleware/verifyAuth.js";
-import { addTextMsg, addToFav, createChatForSummary, createGroupChat, deleteChat, deleteEmptyChat, getChat, getFavChat, getUserChat, getUserGroupChat } from "../Controller/ChatController.js";
+import { addTextMsg, addToFav, createChatForSummary, createGroupChat, deleteChat, deleteEmptyChat, getChat, getFavChat, getUserChat, getUserGroupChat, getUsersOfGroup } from "../Controller/ChatController.js";
 
 const router = express.Router();
 
@@ -17,6 +17,7 @@ router.delete("/deleteEmptyChats", verify, deleteEmptyChat)
 
 router.get("/getusergroupchats", verify, getUserGroupChat);
 router.post("/creategroupchat", verify, createGroupChat);
+router.get("/userofgroup/:chatId", verify, getUsersOfGroup);
 
 
 export default router;

@@ -1,6 +1,6 @@
 import express from "express";
 import { verify } from "../Middleware/verifyAuth.js";
-import { acceptReq, areFriends, declineReq, getProfile, getUser, relationWithUser, removeFriend, retractReq, searchUser, sendReq } from "../Controller/FriendController.js";
+import { acceptReq, areFriends, declineReq, getFriendList, getProfile, getUser, relationWithUser, removeFriend, retractReq, searchUser, sendReq } from "../Controller/FriendController.js";
 
 const router = express.Router();
 
@@ -38,6 +38,8 @@ router.post("/removefriend", verify, removeFriend);
 // relation with user
 
 router.get("/relation/:id", verify, relationWithUser);
+
+router.get("/friendlist", verify, getFriendList);
 
 
 

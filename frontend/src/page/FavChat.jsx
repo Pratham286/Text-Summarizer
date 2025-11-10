@@ -33,9 +33,6 @@ const FavChat = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-slate-950">
-    
-
-      {/* Header Section */}
       <div className="relative z-10 pt-8 pb-6">
         <div className="max-w-6xl mx-auto px-6">
           <div className="relative">
@@ -59,8 +56,6 @@ const FavChat = () => {
           </div>
         </div>
       </div>
-
-      {/* Content Section */}
       <div className="max-w-6xl mx-auto px-6 pb-10 relative z-10">
         {fetched ? (
           <div className="flex flex-col items-center justify-center py-20">
@@ -89,8 +84,6 @@ const FavChat = () => {
                   <p className="text-slate-400 text-center max-w-md text-md leading-relaxed mb-8">
                     You haven't marked any conversations as favorites yet. Start exploring and save your best chats by clicking the heart icon!
                   </p>
-                  
-                  {/* CTA buttons */}
                   <div className="flex gap-4">
                     <button 
                       onClick={() => navigate('/dashboard')}
@@ -113,12 +106,9 @@ const FavChat = () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {/* Favorite chat cards grid */}
                   <div className="grid gap-4">
                     {favChatArr.map((chat, i) => (
                       <div key={i} className="group relative">
-                        {/* Card glow effect */}
-                        <div className="absolute -inset-1 bg-slate-700/20 rounded-3xl blur opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                         
                         <div className="relative bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-3xl shadow-2xl transition-all duration-500 overflow-hidden">
                           <div className="p-4">
@@ -175,8 +165,6 @@ const FavChat = () => {
                 <p className="text-slate-400 text-center max-w-md text-md leading-relaxed mb-8">
                   We're having trouble loading your favorite chats right now. Please check your connection and try again.
                 </p>
-                
-                {/* Retry button */}
                 <button 
                   onClick={() => window.location.reload()}
                   className="group relative overflow-hidden bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 border border-slate-700"

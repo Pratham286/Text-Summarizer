@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import { useMyContext } from '../context/MyContext';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { FaSearch, FaArrowRight, FaFrown } from 'react-icons/fa';
-import SearchedUserProfile from '../component/SearchedUserProfile';
+import React, { useEffect, useState } from "react";
+import { useMyContext } from "../context/MyContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FaSearch, FaArrowRight, FaFrown } from "react-icons/fa";
+import SearchedUserProfile from "../component/SearchedUserProfile";
 
 function SearchPage() {
-    const [word, setWord] = useState("");
+  const [word, setWord] = useState("");
   const { url, user } = useMyContext();
-  console.log(user);
+  // console.log(user);
   const [userList, setUserList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,15 +21,15 @@ function SearchPage() {
           setIsLoading(false);
           return;
         }
-        
+
         setIsLoading(true);
         try {
           const response = await axios.post(
             `${url}/friends/searchuser`,
-            { query : word },
+            { query: word },
             { withCredentials: true }
           );
-          console.log(response.data);
+          // console.log(response.data);
           setUserList(response.data.users);
         } catch (error) {
           console.log("Error:", error);
@@ -43,7 +43,7 @@ function SearchPage() {
 
     return () => clearTimeout(delayDebounce);
   }, [word, url]);
-  
+
   const handleProfile = (u) => {
     const userId = u._id;
 
@@ -52,28 +52,25 @@ function SearchPage() {
     } else {
       navigate("/userprofile", {
         state: {
-          userId: userId
-        }
+          userId: userId,
+        },
       });
     }
   };
   return (
     <div className="min-h-screen relative overflow-hidden bg-slate-950">
       <div className="relative z-10">
-        {/* Header Section */}
         <section className="pt-20 pb-8 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-2xl lg:text-3xl font-bold text-white mb-6">
               Discover People
             </h1>
-            
+
             <p className="text-md text-slate-400 mb-5 max-w-3xl mx-auto">
               Find new friends and connections
             </p>
           </div>
         </section>
-
-        {/* Search Section */}
         <section className="px-4 pb-8">
           <div className="max-w-4xl mx-auto">
             <div className="bg-slate-900 rounded-lg p-6 border border-slate-800">
@@ -95,14 +92,11 @@ function SearchPage() {
             </div>
           </div>
         </section>
-
-        {/* Results Section */}
         <section className="px-4 pb-20">
           <div className="max-w-4xl mx-auto">
             <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-16">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-400 mb-4"></div>
                   <p className="text-slate-400">Searching for users...</p>
                 </div>
               ) : word.trim() === "" ? (
@@ -172,5 +166,4 @@ function SearchPage() {
     </div>
   );
 }
-
-export default SearchPage
+export default SearchPage;

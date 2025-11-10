@@ -17,7 +17,7 @@ const ChatBar = ({isMenuOpen, setIsMenuOpen}) => {
             const fetchChat = async () => {
                 try {
                     const response = await axios.get(`${url}/chat/getuserchat`, {withCredentials: true});
-                    console.log(response.data.chatDetails);
+                    // console.log(response.data.chatDetails);
                     setChatDetails(response.data.chatDetails);
                 } catch (error) {
                     console.log(error);

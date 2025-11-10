@@ -19,25 +19,7 @@ import SearchPage from "./page/SearchPage";
 import UserProfile from "./page/UserProfile";
 
 function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const { isLogin } = useMyContext();
 
-  // Reset menu state when login status changes
-  useEffect(() => {
-    if (!isLogin) {
-      setIsMenuOpen(false);
-    } else {
-      setIsMenuOpen(true);
-    }
-  }, [isLogin]);
-
-  // Calculate sidebar width based on login and menu state
-  const getSidebarWidth = () => {
-    if (!isLogin) return "w-0"; // Hide completely when not logged in
-    return isMenuOpen ? "w-80" : "w-16"; // Expanded or collapsed when logged in
-  };
-
-  const sidebarWidth = getSidebarWidth();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 relative overflow-hidden">
@@ -47,11 +29,7 @@ function App() {
       </div>
 
         <main className="flex-1 overflow-auto relative">
-          {/* Content backdrop */}
-          <div className="absolute inset-0 bg-slate-950 backdrop-blur-sm"></div>
-          
-          {/* Content container */}
-          <div className="relative z-10 min-h-full">
+          <div className="relative z-40 min-h-full">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/signup" element={<Signup />} />

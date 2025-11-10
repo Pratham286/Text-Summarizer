@@ -4,16 +4,15 @@ import { useMyContext } from "../context/MyContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 const CreateGroupChat = ({ onBack }) => {
-    const { url, user } = useMyContext();
+  const { url, user } = useMyContext();
   const [friend, setFriend] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([user.id]);
   const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectTopic, setSelectTopic] = useState(false);
   const navigate = useNavigate();
-//   console.log(user.id)
+  //   console.log(user.id)
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -21,7 +20,7 @@ const CreateGroupChat = ({ onBack }) => {
         const response = await axios.get(`${url}/friends/friendlist`, {
           withCredentials: true,
         });
-        console.log(response.data);
+        // console.log(response.data);
         setFriend(response.data.friends);
       } catch (error) {
         console.log("Error fetching friends:", error);
@@ -52,47 +51,35 @@ const CreateGroupChat = ({ onBack }) => {
 
   const confirmCreateGroup = async (summaryType) => {
     try {
-        setLoading(true);
-        const response = await axios.post(`${url}/chat/creategroupchat`, {summaryType, usersList: selectedFriends, groupName}, {
-            withCredentials: true,
-        });
-        const chatId = response.data.chatDetails._id;
-        navigate("/textsummary", { state: chatId });
-        console.log("Group chat created successfully:", response.data);
+      setLoading(true);
+      const response = await axios.post(
+        `${url}/chat/creategroupchat`,
+        { summaryType, usersList: selectedFriends, groupName },
+        {
+          withCredentials: true,
+        }
+      );
+      const chatId = response.data.chatDetails._id;
+      navigate("/textsummary", { state: chatId });
+      // console.log("Group chat created successfully:", response.data);
     } catch (error) {
-        console.log("Error in creating group chat, Error: ", error);
-    }
-    finally{
-        setLoading(false);
-        setSelectTopic(false);
-        if(onBack) onBack();
+      console.log("Error in creating group chat, Error: ", error);
+    } finally {
+      setLoading(false);
+      setSelectTopic(false);
+      if (onBack) onBack();
     }
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-slate-950 z-0">
-      {/* Header Section */}
       <div className="relative pt-20 pb-16 z-10">
         <div className="text-center max-w-4xl mx-auto px-6">
-          {/* Back Button */}
           {onBack && (
             <button
               onClick={onBack}
               className="absolute left-6 top-20 flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
               <span className="font-medium">Back to Dashboard</span>
             </button>
           )}
@@ -105,13 +92,8 @@ const CreateGroupChat = ({ onBack }) => {
           </p>
         </div>
       </div>
-
-      {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 pb-20 relative z-10">
-        {/* Main Card */}
         <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-10 shadow-2xl">
-          
-          {/* Group Name Input */}
           <div className="mb-8">
             <label className="block text-white text-lg font-semibold mb-3">
               Group Name
@@ -124,20 +106,14 @@ const CreateGroupChat = ({ onBack }) => {
               className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-slate-600 transition-colors"
             />
           </div>
-
-          {/* Selected Friends Count */}
           <div className="mb-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">
-                Select Friends
-              </h2>
+              <h2 className="text-xl font-bold text-white">Select Friends</h2>
               <span className="text-sm text-slate-400 bg-slate-800/50 px-3 py-1 rounded-lg">
                 {selectedFriends.length} selected
               </span>
             </div>
           </div>
-
-          {/* Friends List */}
           <div className="space-y-2 mb-8 max-h-96 overflow-y-auto">
             {friend.map((friendItem) => {
               const isSelected = selectedFriends.includes(friendItem._id);
@@ -153,7 +129,6 @@ const CreateGroupChat = ({ onBack }) => {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center flex-1 min-w-0">
-                      {/* Avatar */}
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0 ${
                           isSelected
@@ -163,8 +138,6 @@ const CreateGroupChat = ({ onBack }) => {
                       >
                         {friendItem.fName?.substring(0, 1).toUpperCase()}
                       </div>
-
-                      {/* Friend Name */}
                       <span
                         className={`ml-3 font-medium ${
                           isSelected ? "text-white" : "text-slate-300"
@@ -173,8 +146,6 @@ const CreateGroupChat = ({ onBack }) => {
                         {friendItem.username}
                       </span>
                     </div>
-
-                    {/* Checkbox Indicator */}
                     <div
                       className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                         isSelected
@@ -203,8 +174,6 @@ const CreateGroupChat = ({ onBack }) => {
               );
             })}
           </div>
-
-          {/* Create Group Button */}
           <button
             onClick={handleCreateGroup}
             disabled={selectedFriends.length < 1 || !groupName.trim()}
@@ -237,24 +206,16 @@ const CreateGroupChat = ({ onBack }) => {
           )}
         </div>
       </div>
-
-      {/* Summary Type Selection Modal */}
       {selectTopic && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Backdrop with blur */}
           <div
             className="absolute inset-0 bg-black/80 backdrop-blur-md z-[100]"
             onClick={() => !loading && setSelectTopic(false)}
           >
             {" "}
           </div>
-
-          {/* Modal Container */}
           <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col z-[101]">
-
-            {/* Modal Content */}
             <div className="relative bg-slate-900/95 backdrop-blur-2xl border border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-              {/* Header - Fixed */}
               <div className="px-8 pt-8 pb-6 border-b border-slate-800/50 bg-slate-900/80 flex-shrink-0">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center flex-1">
@@ -267,22 +228,28 @@ const CreateGroupChat = ({ onBack }) => {
                       </p>
                     </div>
                   </div>
-
-                  {/* Close button in header */}
                   <button
                     onClick={() => setSelectTopic(false)}
                     disabled={loading}
                     className="ml-4 p-2 rounded-lg hover:bg-slate-800/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 text-slate-400 hover:text-white"
                     aria-label="Close modal"
                   >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
               </div>
-
-              {/* Scrollable Options */}
               <div className="px-8 py-6 overflow-y-auto flex-1">
                 <div className="grid grid-cols-1 gap-2">
                   {dataArr.map((item, i) => (
@@ -311,8 +278,6 @@ const CreateGroupChat = ({ onBack }) => {
                   ))}
                 </div>
               </div>
-
-              {/* Footer - Fixed */}
               <div className="px-6 py-4 border-t border-slate-800/50 bg-slate-900/80 flex-shrink-0">
                 <button
                   onClick={() => setSelectTopic(false)}

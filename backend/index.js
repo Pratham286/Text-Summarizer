@@ -17,10 +17,14 @@ connectToDb();
 app.use(express.json()); 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://brieflyai-frontend.onrender.com",
+    ],
     credentials: true,
   })
 );
+
 app.use(cookieParser());
 
 app.use("/auth", authRoute);

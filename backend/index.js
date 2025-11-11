@@ -11,7 +11,7 @@ import friendsRoute from "./Routes/Friends.js";
 const app = express();
 dotenv.config();
 
-const port = process.env.PORT; //3000
+const port = process.env.PORT || 3000; //3000
 connectToDb();
 
 app.use(express.json()); 

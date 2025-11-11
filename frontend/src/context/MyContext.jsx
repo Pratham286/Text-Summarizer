@@ -7,7 +7,7 @@ import { createContext } from 'react'
 const MyContext = createContext();
 
 export const MyProvider = ({children}) => {
-    const url = "http://localhost:3000";
+    const url = "https://brieflyai-backend.onrender.com";
 
     const [isLogin, setIsLogin] = useState(false);
     const [user, setUser] = useState(null);

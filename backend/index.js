@@ -15,6 +15,7 @@ const port = process.env.PORT || 3000; //3000
 connectToDb();
 
 app.use(express.json()); 
+app.use(cookieParser());
 app.use(
   cors({
     origin: [
@@ -25,7 +26,6 @@ app.use(
   })
 );
 
-app.use(cookieParser());
 
 app.use("/auth", authRoute);
 app.use("/chat", chatRoute);

@@ -65,6 +65,7 @@ const TextSummary = () => {
           { chatId: chatId },
           { withCredentials: true }
         );
+        // console.log(response.data.chatDetails);
         setIsGroupChat(response.data.chatDetails.isGroupChat);
         setChatData(response.data.chatDetails);
         setMessageData(response.data.chatDetails.chatMessages.slice(1));
@@ -100,7 +101,7 @@ const TextSummary = () => {
   };
   const handleGetUsers = async () => {
     try {
-      const response = await axios.get(`${url}/chat/userofgroup/${chatId}`, {
+      const response = await axios.get(`${url}/chat/groupuser/${chatId}`, {
         withCredentials: true,
       });
       //  console.log( response.data.chat.chatUsers);

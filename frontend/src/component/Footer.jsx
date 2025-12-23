@@ -4,7 +4,7 @@ import { FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <div className="relative bg-slate-950 border-t border-slate-800 shadow-2xl backdrop-blur-md overflow-hidden">
+    <div className="relative bg-gray-950 border-t border-slate-800 shadow-2xl backdrop-blur-md overflow-hidden">
       <div className="relative z-10 w-full px-6 py-4">
         <div className="md:hidden flex flex-col items-center gap-4 text-center">
           <div className="text-slate-300 font-serif text-sm font-medium">

@@ -84,15 +84,26 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 relative overflow-hidden">
+      {isSubmitting && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-slate-200 rounded-full border-t-transparent animate-spin"></div>
+            </div>
+            <p className="text-slate-300 text-lg font-medium">Creating Account...</p>
+          </div>
+        </div>
+      )}
       <div className="relative z-10 min-h-screen flex flex-col md:flex-row">
-        <div className="w-full lg:w-7/16 flex items-center justify-center p-8 lg:p-12 relative">
-          <div className="relative z-10 text-center max-w-md ">
+        <div className="w-full lg:w-7/16 flex items-center justify-center p-8 lg:p-12 relative ">
+          <div className="relative z-10 text-center max-w-md border border-slate-700 py-10 rounded-lg bg-slate-900">
             <div className="mb-8">
               <h1 className="text-2xl lg:text-3xl font-bold mb-4 leading-tight text-white">
                 Welcome to
-                <span className="block text-slate-400">Text Summarizer</span>
+                <span className="block text-sky-500">BrieflyAI</span>
               </h1>
-              <p className="text-md text-slate-300 mb-8 leading-relaxed">
+              <p className="text-md text-slate-200 mb-8 leading-relaxed">
                 Create your account and start your journey today. Access unique personalized dashboard and tools.
               </p>
             </div>
@@ -101,7 +112,7 @@ const Signup = () => {
 
         {/* Signup Form */}
         <div className="w-full lg:w-9/16 flex items-center justify-center p-4 lg:p-8 relative">
-          <div className="relative z-10 w-full max-w-md lg:max-w-lg">
+          <div className="relative z-10 w-full max-w-md lg:max-w-lg border border-slate-700 py-10 rounded-lg">
             <div className="text-center mb-6 lg:mb-8">
               <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
                 Create Your Account

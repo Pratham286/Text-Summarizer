@@ -7,7 +7,8 @@ const ChatSchema = new Schema({
     }],
     chatUsers: [{
         type: Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required : true
     }],
     chatVisibility : {
         type : String,
@@ -16,7 +17,8 @@ const ChatSchema = new Schema({
     },
     chatName : {
         type : String,
-        trim : true
+        trim : true,
+        maxlength : 20 
     },
     isGroupChat : {
         type : Boolean,
@@ -24,10 +26,13 @@ const ChatSchema = new Schema({
     },
     createdBy : {
         type : Schema.Types.ObjectId,
-        ref : "User"
+        ref : "User",
+        required : true
     }
 }, {timestamps: true});
 
 ChatSchema.index({chatUsers : 1}); // to find all chats of user
+
+
 
 export const Chat = model("Chat", ChatSchema);

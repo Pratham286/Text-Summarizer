@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/verify", verify , checkUser) // For Authorization Checking.
 router.post("/signup", signup)
 router.post("/login", login)
-router.get("/logout", verify, logout)
+router.post("/logout", verify, logout)
 router.post("/getuser", verify, getUser);
 
 

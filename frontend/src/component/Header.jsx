@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { VscThreeBars } from "react-icons/vsc";
+import { MdOutlineSmartToy } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import axios from "axios";
 import { useMyContext } from "../context/MyContext";
+import { IoMdPersonAdd } from "react-icons/io";
+import { MdOutlineLogout, MdLogin } from "react-icons/md";
+import { FaUser } from "react-icons/fa";
+import { IoSearchSharp, IoChatbox } from "react-icons/io5";
+import { MdOutlineGroup } from "react-icons/md";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const [isLogin, setIsLogin] = useState(false);
   const { isLogin, setIsLogin, url } = useMyContext();
-  // console.log(isLogin)
 
   const handleOpen = () => {
     setIsMenuOpen(true);
@@ -21,7 +25,7 @@ const Header = () => {
   };
   const handleLogout = async () => {
     try {
-      const response = await axios.get(`${url}/auth/logout`, {
+      const response = await axios.post(`${url}/auth/logout`,{} ,{
         withCredentials: true,
       });
       // console.log(response);
@@ -41,13 +45,14 @@ const Header = () => {
     }
   };
   return (
-    <div className="relative bg-slate-950 sticky top-0 z-50 h-16 shadow-lg backdrop-blur-md border-b border-slate-800">
+    <div className="relative bg-gray-950 sticky top-0 z-50 h-16 shadow-lg backdrop-blur-md border-b border-slate-800">
       <div className="relative w-full flex justify-between px-6 items-center mx-auto h-full ">
         <div
           onClick={handleHomeClick}
-          className="font-bold text-xl px-3 py-2 font-serif text-white hover:text-slate-300 transition-all duration-300 cursor-pointer transform hover:scale-105"
+          className="flex font-bold text-xl px-3 py-2 font-serif text-white hover:text-slate-300 transition-all duration-200 cursor-pointer transform hover:scale-105"
         >
-          ✨ BrieflyAI
+          <MdOutlineSmartToy className="h-6 w-6 mr-2" />
+          BrieflyAI
         </div>
 
         <div className="hidden md:block text-sm">
@@ -55,42 +60,58 @@ const Header = () => {
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => navigate("/search")}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-                🔍 Search
+                <IoSearchSharp className="h-4 w-4" />
+                <span>Search</span>
               </button>
+
               <button
                 onClick={() => navigate("/chat")}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-                💬 Chats
+                <IoChatbox className="h-4 w-4"/>
+                Chats
               </button>
+
+              <button
+                onClick={() => navigate("/mygroupchats")}
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+              >
+                <MdOutlineGroup className="h-4 w-4"/>
+                Group Chats
+              </button>
+
               <button
                 onClick={() => navigate("/profile")}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-                👤 My Profile
+                <FaUser className="h-4 w-4"/>
+                My Profile
               </button>
               <button
                 onClick={handleLogout}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-                🚪 Logout
+                <MdOutlineLogout className="h-4 w-4"/>
+                Logout
               </button>
             </div>
           ) : (
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => navigate("/signup")}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-                ✨ Sign up
+                <IoMdPersonAdd className="h-4 w-4"/>
+                Sign up
               </button>
               <button
                 onClick={() => navigate("/login")}
-                className="px-3 py-2 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 hover:bg-slate-900"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700"
               >
-                🔑 Sign in
+                <MdLogin className="h-4 w-4"/>
+                Sign in
               </button>
             </div>
           )}
@@ -119,45 +140,60 @@ const Header = () => {
 
       {/* For Mobile */}
       {isMenuOpen && (
+
         <div className="md:hidden absolute top-full right-4 mt-2 w-48 bg-slate-900 rounded-xl shadow-2xl border border-slate-800 backdrop-blur-md animate-in slide-in-from-top-2 duration-300">
           <div className="p-4 flex flex-col gap-3 text-sm">
             {isLogin ? (
               <>
                 <button
                   onClick={() => {
-                    navigate("/mygroupchats");
+                    navigate("/search");
                     setIsMenuOpen(false);
                   }}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
-                  💬 Group Chats
+                  <IoSearchSharp className="h-4 w-4" />
+                  <span>Search</span>
                 </button>
                 <button
                   onClick={() => {
                     navigate("/chat");
                     setIsMenuOpen(false);
                   }}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
-                  💬 Chats
+                  <IoChatbox className="h-4 w-4"/>
+                  Chats
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/mygroupchats");
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                >
+                  <MdOutlineGroup className="h-4 w-4"/>
+                  Group Chats
                 </button>
                 <button
                   onClick={() => {
                     navigate("/profile");
                     setIsMenuOpen(false);
                   }}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
-                  👤 My Profile
+                  <FaUser className="h-4 w-4"/>
+                  My Profile
                 </button>
                 <button
                   onClick={() => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
-                  🚪 Logout
+                  <MdOutlineLogout className="h-4 w-4"/>
+                  Logout
                 </button>
               </>
             ) : (
@@ -167,18 +203,20 @@ const Header = () => {
                     navigate("/signup");
                     setIsMenuOpen(false);
                   }}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left border border-slate-700"
                 >
-                  ✨ Sign up
+                  <IoMdPersonAdd className="h-4 w-4"/>
+                  Sign up
                 </button>
                 <button
                   onClick={() => {
                     navigate("/login");
                     setIsMenuOpen(false);
                   }}
-                  className="px-3 py-2 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-left hover:bg-slate-900"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium shadow-lg transform hover:scale-105 transition-all duration-300 border border-slate-700 text-left"
                 >
-                  🔑 Sign in
+                  <MdLogin className="h-4 w-4"/>
+                  Sign in
                 </button>
               </>
             )}

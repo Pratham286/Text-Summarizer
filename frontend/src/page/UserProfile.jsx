@@ -102,7 +102,7 @@ function UserProfile() {
     if (!userId || loading) return;
     setLoading(true);
     const prevSentByMe = friendReqSentByMe;
-    setFriendReqSentByMe(true); 
+    setFriendReqSentByMe(true);
 
     try {
       await axios.post(
@@ -113,7 +113,7 @@ function UserProfile() {
       refresh();
     } catch (err) {
       console.error("send friend req err:", err);
-      setFriendReqSentByMe(prevSentByMe); 
+      setFriendReqSentByMe(prevSentByMe);
     } finally {
       setLoading(false);
     }
@@ -123,7 +123,7 @@ function UserProfile() {
     if (!userId || loading) return;
     setLoading(true);
     const prevSent = friendReqSentByMe;
-    setFriendReqSentByMe(false); 
+    setFriendReqSentByMe(false);
 
     try {
       await axios.post(
@@ -134,7 +134,7 @@ function UserProfile() {
       refresh();
     } catch (err) {
       console.error("retract friend req err:", err);
-      setFriendReqSentByMe(prevSent); 
+      setFriendReqSentByMe(prevSent);
     } finally {
       setLoading(false);
     }
@@ -218,7 +218,6 @@ function UserProfile() {
         </section>
         <section className="px-4 pb-20">
           <div className="max-w-4xl mx-auto">
-
             <div className="bg-slate-900 rounded-lg p-8 border border-slate-800 mb-6">
               <div className="flex flex-col lg:flex-row items-center gap-8">
                 <div className="relative">
@@ -238,7 +237,10 @@ function UserProfile() {
                   <div className="mt-4">
                     {loading ? (
                       <div className="flex items-center gap-2 justify-center lg:justify-start">
-                        <span className="text-slate-400 text-sm">Loading...</span>
+                        <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin"></div>
+                        <span className="text-slate-400 text-sm">
+                          Loading...
+                        </span>
                       </div>
                     ) : (
                       <div className="flex flex-wrap items-center gap-3 justify-center lg:justify-start">

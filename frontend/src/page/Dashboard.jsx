@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { dataArr } from "../Data/TextSummaryData";
 import CreateGroupChat from "./CreateGroupChat";
+import { IoMdPersonAdd, IoMdAdd } from "react-icons/io";
 
 const Dashboard = () => {
   const [selectTopic, setSelectTopic] = useState(false);
@@ -17,7 +18,7 @@ const Dashboard = () => {
   useEffect(() => {
     const deleteEmptyChat = async () => {
       try {
-        const response = await axios.delete(`${url}/chat/deleteEmptyChats`, {
+        const response = await axios.delete(`${url}/chat/deleteemptychats`, {
           withCredentials: true,
         });
         console.log(response);
@@ -52,14 +53,26 @@ const Dashboard = () => {
   }
 
   return (
+
     <div className="min-h-screen relative overflow-hidden bg-slate-950 z-0">
-      <div className="relative pt-20 pb-16 z-10">
-        <div className="text-center max-w-4xl mx-auto px-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">
-            Text Summarizer
+      {loading && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-slate-200 rounded-full border-t-transparent animate-spin"></div>
+            </div>
+            <p className="text-slate-300 text-lg font-medium">Creating New Chat</p>
+          </div>
+        </div>
+      )}
+      <div className="relative pt-20 pb-16 z-10 ">
+        <div className="text-center max-w-2xl mx-auto px-6 py-6 border border-slate-700 rounded-lg bg-slate-900">
+          <h1 className="text-3xl md:text-4xl font-bold text-sky-500 mb-6 tracking-tight">
+            BrieflyAI
           </h1>
 
-          <p className="text-slate-300 max-w-3xl mx-auto leading-relaxed mb-4 text-sm">
+          <p className="text-slate-200 max-w-3xl mx-auto leading-relaxed mb-4 text-sm">
             Transform your lengthy texts into clear, concise summaries.
           </p>
         </div>
@@ -67,9 +80,9 @@ const Dashboard = () => {
 
       <div className="max-w-7xl mx-auto px-6 pb-20 relative z-10">
         <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-10 shadow-2xl hover:shadow-slate-800/20 transition-all duration-500 hover:border-slate-700">
-            <div className="flex items-center mb-8">
-              <h2 className="text-xl font-bold text-white">
+          <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-10 shadow-2xl hover:shadow-slate-800/20 transition-all duration-500 hover:border-slate-700 flex flex-col items-center">
+            <div className="flex items-center justify-center mb-8">
+              <h2 className="text-xl font-bold text-white text-center">
                 Smart Text Summarization
               </h2>
             </div>
@@ -79,22 +92,16 @@ const Dashboard = () => {
               disabled={loading}
               className="group relative overflow-hidden bg-slate-800 hover:bg-slate-700 text-white font-semibold text-md px-8 py-4 rounded-2xl shadow-2xl hover:shadow-slate-700/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 border border-slate-700"
             >
-              <span className="relative z-10 flex items-center text-md">
-                {loading ? (
-                  <>Creating Summary...</>
-                ) : (
-                  <>
-                    <span className="mr-3">✨</span>
+              <span className="relative z-10 flex items-center justify-center text-md gap-2">
+                    <IoMdAdd />
                     Start New Summary
-                  </>
-                )}
               </span>
             </button>
           </div>
 
-          <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-10 shadow-2xl hover:shadow-slate-800/20 transition-all duration-500 hover:border-slate-700">
-            <div className="flex items-center mb-8">
-              <h2 className="text-xl font-bold text-white">
+          <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-10 shadow-2xl hover:shadow-slate-800/20 transition-all duration-500 hover:border-slate-700 flex flex-col items-center">
+            <div className="flex items-center justify-center mb-8">
+              <h2 className="text-xl font-bold text-white text-center">
                 Collaborative Chat
               </h2>
             </div>
@@ -103,8 +110,8 @@ const Dashboard = () => {
               onClick={() => setShowGroupChat(true)}
               className="group relative overflow-hidden bg-slate-800 hover:bg-slate-700 text-white font-semibold text-md px-8 py-4 rounded-2xl shadow-2xl hover:shadow-slate-700/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 border border-slate-700"
             >
-              <span className="relative z-10 flex items-center text-md">
-                <span className="mr-3">👥</span>
+              <span className="relative z-10 flex items-center justify-center text-md gap-2">
+                <IoMdPersonAdd />
                 Create Group Chat
               </span>
             </button>

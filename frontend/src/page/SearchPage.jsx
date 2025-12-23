@@ -97,6 +97,7 @@ function SearchPage() {
             <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-16">
+                  <div className="w-8 h-8 border-4 border-slate-300 border-t-slate-600 rounded-full animate-spin mb-4"></div>
                   <p className="text-slate-400">Searching for users...</p>
                 </div>
               ) : word.trim() === "" ? (

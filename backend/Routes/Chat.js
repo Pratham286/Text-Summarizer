@@ -11,13 +11,13 @@ router.post("/addtext", verify, addTextMsg)
 router.delete("/delete/:id", verify, deleteChat)
 router.post("/addtofav", verify, addToFav)
 router.get("/getfavchat", verify, getFavChat)
-router.delete("/deleteEmptyChats", verify, deleteEmptyChat)
+router.delete("/deleteemptychats", verify, deleteEmptyChat)
 
 
 
 router.get("/getusergroupchats", verify, getUserGroupChat);
 router.post("/creategroupchat", verify, createGroupChat);
-router.get("/userofgroup/:chatId", verify, getUsersOfGroup);
+router.get("/groupuser/:chatId", verify, getUsersOfGroup);
 
 
 export default router;

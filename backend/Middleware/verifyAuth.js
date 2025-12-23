@@ -17,10 +17,14 @@ export const verify = async (req, res, next) => {
     // Using Cookies-Token
     const token = req.cookies.token;
     if(!token){
-        return  res.status(401).json({ message: "Token not found or Invalid Token" });
+        return  res.status(401).json({ message: "Token not found" });
     }
 
     const key = process.env.Secret_Key;
+    if(!key)
+    {
+      return res.status(500).json({message : "Key not found"});
+    }
     const decoded = jwt.verify(token, key);
     req.user = decoded
     next();

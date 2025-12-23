@@ -74,11 +74,11 @@ const CreateGroupChat = ({ onBack }) => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-slate-950 z-0">
       <div className="relative pt-20 pb-16 z-10">
-        <div className="text-center max-w-4xl mx-auto px-6">
+        <div className="text-center max-w-4xl mx-auto px-6 ">
           {onBack && (
             <button
               onClick={onBack}
-              className="absolute left-6 top-20 flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+              className="absolute left-6 top-20 flex items-center gap-2 text-slate-400 hover:text-white transition-colors border border-slate-700 p-3 rounded-lg bg-slate-900 hover:bg-slate-950"
             >
               <span className="font-medium">Back to Dashboard</span>
             </button>
@@ -110,7 +110,7 @@ const CreateGroupChat = ({ onBack }) => {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-white">Select Friends</h2>
               <span className="text-sm text-slate-400 bg-slate-800/50 px-3 py-1 rounded-lg">
-                {selectedFriends.length} selected
+                {selectedFriends.length-1} selected
               </span>
             </div>
           </div>
@@ -180,7 +180,6 @@ const CreateGroupChat = ({ onBack }) => {
             className="group relative overflow-hidden w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-slate-700/50 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border border-slate-700"
           >
             <span className="relative z-10 flex items-center justify-center gap-3">
-              <span className="text-xl">👥</span>
               <span>Create Group Chat</span>
               <svg
                 className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"

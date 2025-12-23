@@ -24,7 +24,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 relative overflow-hidden">
       {/* Header */}
-      <div className="relative z-30">
+      <div className="relative z-60">
         <Header />
       </div>
 

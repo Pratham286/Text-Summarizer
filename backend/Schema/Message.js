@@ -4,6 +4,8 @@ const MessageSchema = new Schema({
     messageContent : {
         type: String,
         trim: true,
+        maxlength : 2000,
+        required : true,
     },
     messageRole : {
         type: String,

@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../Schema/User.js";
 import jwt from "jsonwebtoken";
+import { generateTokens } from "../Utils/generateToken.js";
 // import User from "../Schema/User.js"
 
 export const signup = async (req, res) => {
@@ -72,18 +73,23 @@ export const login = async (req, res) => {
       return res.status(500).json({ message: "Server configuration error" });
     }
 
-    const payload = {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-    };
-    const token = jwt.sign(payload, key, { expiresIn: "1h" });
-    res.cookie("token", token, {
+    // const payload = {
+    //   id: user._id,
+    //   username: user.username,
+    //   email: user.email,
+    // };
+    // // const token = jwt.sign(payload, key, { expiresIn: "1h" });
+
+    const {accessToken} = generateTokens(user)
+    
+    res.cookie("accessToken", accessToken, {
       httpOnly: true, // XSS attack prevention (No javascript access)
       secure: true,
       sameSite: "None",
-      maxAge: 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+
     return res.status(200).json({ message: "Login Successful" });
     // console.log(fName);
   } catch (error) {
@@ -111,15 +117,15 @@ export const checkUser = (req, res) => {
     return res.status(200).json({ message: "Verified.", userDetails: user });
   } catch (error) {
     console.log("Failed in verify user, Error: ", error);
-    return res.status(500).json({message : "Error in fetching user"});
+    return res.status(500).json({ message: "Error in fetching user" });
   }
 };
 export const getUser = async (req, res) => {
   try {
     const { userId } = req.body;
 
-    if(!userId){
-        return res.status(400).json({message : "User id not provided"});
+    if (!userId) {
+      return res.status(400).json({ message: "User id not provided" });
     }
     const user = await User.findById(userId).select("-password");
     if (!user) {

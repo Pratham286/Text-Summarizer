@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export const connectToDb = async () => {
     try {
-        await mongoose.connect(process.env.Mongo, {
+        await mongoose.connect(process.env.MONGO_URL, {
             serverSelectionTimeoutMS : 10000,               // if not connected in 10 second, exit.
         });
         console.log("Database connected!");

@@ -1,55 +1,41 @@
 import mongoose, {Schema, model} from "mongoose";
 
 const UserSchema = new Schema({
-    fName : {
-        required: true,
-        trim: true,
-        type: String
-    },
-    lName : {
-        trim: true,
-        type: String
-    },
-    username : {
-        required: true,
-        trim: true,
+    firstName : {
         type: String,
+        required: true,
+        trim: true,
+    },
+    lastName : {
+        type: String,
+        trim: true,
+    },
+    userName : {
+        type: String,
+        required: true,
+        trim: true,
         unique: true,
     },
     email : {
+        type: String,
         required: true,
         trim: true,
-        type: String,
         unique: true,
+        lowercase : true,
     },
     password : {
+        type: String,
         required: true,
         trim: true,
-        type: String,
         minlength : 6,
     },
-    userChats : [{
-        type: Schema.Types.ObjectId,
-        ref: "Chat"
-    }],
-    favouriteChats : [{
-        type: Schema.Types.ObjectId,
-        ref: "Chat"
-    }],
     friends : [{
         type: Schema.Types.ObjectId,
         ref : "User"
     }],
-    pendingFriendReq : [{
-        type: Schema.Types.ObjectId,
-        ref : "User"
-    }],
-    pendingFriendReqSent : [{ 
-    type: Schema.Types.ObjectId,
-    ref : "User"
-    }],
-
 }, {timestamps: true});
+
+UserSchema.index({ userName: "text", firstName: "text", lastName: "text" });
 
 
 export const User = model('User', UserSchema);

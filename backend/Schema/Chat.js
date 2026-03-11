@@ -1,38 +1,44 @@
 import mongoose, { model, Schema } from "mongoose";
 
-const ChatSchema = new Schema({
-    chatMessages : [{
-        type: Schema.Types.ObjectId,
-        ref: "Message"
-    }],
-    chatUsers: [{
+const ChatSchema = new Schema(
+  {
+    chatUsers: [
+      {
         type: Schema.Types.ObjectId,
         ref: "User",
-        required : true
-    }],
-    chatVisibility : {
-        type : String,
-        enum : ["public", "private"],
-        default : "private"
+        required: true,
+      },
+    ],
+    chatName: {
+      type: String,
+      trim: true,
+      maxlength: 50,
+      required: function () { // runValidation req when updating chat
+        return this.isGroupChat;
+      },
     },
-    chatName : {
-        type : String,
-        trim : true,
-        maxlength : 20 
+    lastMessage: {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+      default: null,
     },
-    isGroupChat : {
-        type : Boolean,
-        default : false
+    isFavorite: {
+      type: Boolean,
+      default: false,
     },
-    createdBy : {
-        type : Schema.Types.ObjectId,
-        ref : "User",
-        required : true
-    }
-}, {timestamps: true});
+    isGroupChat: {
+      type: Boolean,
+      default: false,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
 
-ChatSchema.index({chatUsers : 1}); // to find all chats of user
-
-
+ChatSchema.index({ chatUsers: 1 }); // to find all chats of user
 
 export const Chat = model("Chat", ChatSchema);

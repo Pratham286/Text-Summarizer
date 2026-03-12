@@ -6,7 +6,7 @@ export const generateTokens = (user) => {
   const accessSecret = process.env.ACCESS_TOKEN_SECRET;
 
   if (!accessSecret) {
-    throw new ApiError(500);
+    throw new ApiError(500, "Access Key missing");
   }
 
   const payload = {
@@ -17,5 +17,5 @@ export const generateTokens = (user) => {
 
   const accessToken = jwt.sign(payload, accessSecret, { expiresIn: "1h" })
 
-  return { accessToken };
+  return accessToken;
 };

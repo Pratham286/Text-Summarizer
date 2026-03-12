@@ -2,137 +2,137 @@ import bcrypt from "bcrypt";
 import { User } from "../Schema/User.js";
 import jwt from "jsonwebtoken";
 import { generateTokens } from "../Utils/generateToken.js";
+import { asyncHandler } from "../Utils/asyncHandler.js";
+import { ApiError } from "../Utils/ApiError.js";
+import { ApiResponse } from "../Utils/apiResponse.js";
+import { uploadOnCloudinary } from "../Utils/uploadOnCloudinary.js";
 // import User from "../Schema/User.js"
 
-export const signup = async (req, res) => {
-  try {
-    const { fName, lName, username, email, password } = req.body;
+export const signup = asyncHandler(async (req, res) => {
+  const { firstName, lastName, userName, email, password } = req.body;
 
-    // console.log(hashPassword);
-    // const check = await bcrypt.compare(password, hashPassword);
-    // console.log(check);
-
-    if (!fName || !username || !email || !password || password.length < 6) {
-      return res.status(400).json({ message: "Invalid inputs" });
-    }
-
-    const user = await User.findOne({ email: email });
-    if (user) {
-      return res.status(400).json({
-        message: "This Email is already registered. Please try another email",
-      });
-    }
-    const existingUserName = await User.findOne({ username: username });
-    if (existingUserName) {
-      return res.status(400).json({
-        message:
-          "This username is already registered. Please try another username",
-      });
-    }
-    const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      fName: fName,
-      lName: lName,
-      username: username,
-      email: email,
-      password: hashPassword,
-      userChats: [],
-      favouriteChats: [],
-      friends: [],
-      pendingFriendReq: [],
-      pendingFriendReqSent: [],
-    });
-    await newUser.save();
-    return res.status(200).json({ message: "New User Created" });
-    // console.log(fName);
-  } catch (error) {
-    console.log("Failed in signup, Error: ", error);
-    return res.status(500).json({ message: "Error in creating new account." });
+  if (!firstName || !userName || !email || !password || password.length < 6) {
+    throw new ApiError(400, "All fields required");
   }
-};
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Invalid Inputs" });
-    }
+  // avatar 
+  const avatar = req.file?.path;
+  // if(avatar)
+  // {
+  //   console.log(avatar)
+  // }
 
-    const user = await User.findOne({ email: email });
-    if (!user) {
-      return res.status(400).json({ message: "Email is not register." });
-    }
-
-    const check = await bcrypt.compare(password, user.password);
-    if (!check) {
-      return res.status(401).json({ message: "Incorrect Password." });
-    }
-    const key = process.env.Secret_Key;
-    if (!key) {
-      console.error("Key not found in environment variables");
-      return res.status(500).json({ message: "Server configuration error" });
-    }
-
-    // const payload = {
-    //   id: user._id,
-    //   username: user.username,
-    //   email: user.email,
-    // };
-    // // const token = jwt.sign(payload, key, { expiresIn: "1h" });
-
-    const {accessToken} = generateTokens(user)
-    
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true, // XSS attack prevention (No javascript access)
-      secure: true,
-      sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-
-    return res.status(200).json({ message: "Login Successful" });
-    // console.log(fName);
-  } catch (error) {
-    console.log("Failed in login, Error: ", error);
-    return res.status(500).json({ message: "Error in login." });
+  // upload on cloudinary
+  let avatarURL = null;
+  if(avatar)
+  {
+    avatarURL = await uploadOnCloudinary(avatar);
   }
-};
-export const logout = (req, res) => {
-  try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    });
-    return res.status(200).json({ message: "Logout successfully." });
-  } catch (error) {
-    console.log("Failed in logout, Error: ", error);
-    return res.status(500).json({ message: "Error in logout." });
-  }
-};
-export const checkUser = (req, res) => {
-  try {
-    const user = req.user;
-    // console.log(user);
-    return res.status(200).json({ message: "Verified.", userDetails: user });
-  } catch (error) {
-    console.log("Failed in verify user, Error: ", error);
-    return res.status(500).json({ message: "Error in fetching user" });
-  }
-};
-export const getUser = async (req, res) => {
-  try {
-    const { userId } = req.body;
 
-    if (!userId) {
-      return res.status(400).json({ message: "User id not provided" });
+  const existingUser = await User.findOne({
+    $or: [{ email }, { userName }],
+  });
+
+  if (existingUser) {
+    if (existingUser.userName === userName) {
+      throw new ApiError(400, "Username already taken");
     }
-    const user = await User.findById(userId).select("-password");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (existingUser.email === email) {
+      throw new ApiError(400, "Email already registered");
     }
-    return res.status(200).json({ message: "User found", userDetails: user });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
   }
-};
+  
+  // return res.status(200).json({message : "Yes"});
+
+  const hashPassword = await bcrypt.hash(password, 10);
+  const newUser = new User({
+    firstName,
+    lastName,
+    userName,
+    email,
+    password: hashPassword,
+    friends: [],
+    avatar: avatarURL || null,
+  });
+  await newUser.save();
+
+  const createdUser = await User.findById(newUser._id).select("-password");
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, createdUser, "User created successfully"));
+});
+
+export const login = asyncHandler(async (req, res) => {
+  const { userName, email, password } = req.body;
+
+  if ((!email && !userName) || !password) {
+    throw new ApiError(400, "Credentials required");
+  }
+
+  const user = await User.findOne({
+    $or: [{ email }, { userName }],
+  });
+  if (!user) {
+    throw new ApiError(400, "Email / username is not register");
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordCorrect) {
+    throw new ApiError(401, "Wrong Password");
+  }
+
+  const accessToken = generateTokens(user);
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true, // XSS attack prevention (No javascript access)
+    secure: true,
+    sameSite: "None",
+    maxAge: 60 * 60 * 1000,
+  });
+
+  const userResponse = user.toObject();
+  delete userResponse.password;
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, userResponse, "Login Successful"));
+});
+
+export const logout = asyncHandler((req, res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Logout Successfully"));
+});
+
+// export const checkUser = (req, res) => {
+//   try {
+//     const user = req.user;
+//     // console.log(user);
+//     return res.status(200).json({ message: "Verified.", userDetails: user });
+//   } catch (error) {
+//     console.log("Failed in verify user, Error: ", error);
+//     return res.status(500).json({ message: "Error in fetching user" });
+//   }
+// };
+
+export const getUser = asyncHandler(async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    throw new ApiError(400, "User Id not provided")
+  }
+  const user = await User.findById(userId).select("-password");
+  if (!user) {
+    throw new ApiError(404, "User not found")
+  }
+  return res
+  .status(200)
+  .json(new ApiResponse(200, user, "User found"));
+});

@@ -14,7 +14,8 @@ export const verify = asyncHandler(async (req, res, next) => {
 
   // Using Cookies-Token
   
-  const token = req.cookies.token;
+  const token = req.cookies.accessToken;
+  // console.log(token);
   if (!token) {
     throw new ApiError(401, "Token not found");
   }

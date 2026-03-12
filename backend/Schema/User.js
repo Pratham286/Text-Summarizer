@@ -33,6 +33,10 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref : "User"
     }],
+    avatar : {
+        type : String,
+        default: null,
+    }
 }, {timestamps: true});
 
 UserSchema.index({ userName: "text", firstName: "text", lastName: "text" });

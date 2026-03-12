@@ -14,17 +14,18 @@ export const verify = asyncHandler(async (req, res, next) => {
 
   // Using Cookies-Token
   
-  const token = req.cookies.token;
+  const token = req.cookies.accessToken;
+  // console.log(token);
   if (!token) {
     throw new ApiError(401, "Token not found");
   }
 
-  const key = process.env.Secret_Key;
+  const key = process.env.ACCESS_TOKEN_SECRET;
   if (!key) {
     throw new ApiError(500, "Key not found");
   }
   try {
-    const decoded = jwt.verify(accessToken, key);
+    const decoded = jwt.verify(token, key);
     req.user = decoded; // user contains payload
     next();
   } catch (error) {

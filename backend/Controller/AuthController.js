@@ -136,3 +136,6 @@ export const getUser = asyncHandler(async (req, res) => {
   .status(200)
   .json(new ApiResponse(200, user, "User found"));
 });
+
+// changing avatar
+// changing username

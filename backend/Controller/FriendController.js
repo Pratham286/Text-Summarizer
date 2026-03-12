@@ -1,146 +1,183 @@
 import { Chat } from "../Schema/Chat.js";
 import { Message } from "../Schema/Message.js";
 import { User } from "../Schema/User.js";
+import { FriendRequest } from "../Schema/FriendReq.js";
+import { ApiError } from "../Utils/ApiError.js";
+import { ApiResponse } from "../Utils/apiResponse.js";
+import { asyncHandler } from "../Utils/asyncHandler.js";
 
-export const getUser = async (req, res) => {
-  try {
-    const userDetails = req.user;
-    if (!userDetails) {
-      return res.status(404).json({ message: "User not Found" });
-    }
-    return res.status(200).json({ message: "User found", userDetails });
-  } catch (error) {
-    return res.status(500).json({ message: "Error in fetching user details" });
+export const getUser = asyncHandler(async (req, res) => {
+  const userDetails = req.user;
+  if (!userDetails) {
+    throw new ApiError(404, "User not found");
   }
-};
 
-export const getProfile = async (req, res) => {
-  try {
-    const id = req.params.id;
-    if (!id) {
-      return res.status(400).json({ message: "User Id not found" });
-    }
-    const profile = await User.findById(id).select("-password");
-    if (!profile) {
-      return res.status(404).json({ message: "User Profile not found" });
-    }
-    return res.status(200).json({ message: "User found", profile });
-  } catch (error) {
-    console.error("Error fetching profile:", error);
-    return res.status(500).json({ message: "Error in fetching user details" });
+  return res.status(200).json(new ApiResponse(200, userDetails, "User found"));
+});
+
+export const getProfile = asyncHandler(async (req, res) => {
+  const userid = req.params.id;
+  if (!userid) {
+    throw new ApiError(400, "Id required");
   }
-};
-
-export const searchUser = async (req, res) => {
-  try {
-    const { query } = req.body;
-    if (!query) {
-      return res.status(400).json({ message: "query not found" });
-    }
-    // const searchQuery = query.trim();
-    // if (searchQuery.length < 2) {
-    //   return res.status(400).json({ message: "Search query must be at least 2 characters" });
-    // }
-    const users = await User.find({
-      $or: [
-        { username: { $regex: query, $options: "i" } },
-        { fName: { $regex: query, $options: "i" } },
-        { lName: { $regex: query, $options: "i" } },
-        { email: { $regex: query, $options: "i" } },
-      ],
-    })
-      .select("-password")
-      .limit(20); // Limit results to prevent huge responses;
-    return res.status(200).json({ message: "Users found", users });
-  } catch (error) {
-    console.error("Error in searching profile:", error);
-    return res.status(500).json({ message: "Error in searching users" });
+  const profile = await User.findById(userid).select("-password");
+  if (!profile) {
+    throw new ApiError(404, "User profile not found");
   }
-};
+  return res.status(200).json(new ApiResponse(200, profile, "User found"));
+});
 
-export const areFriends = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const otherUserId = req.params.id;
-    if (!otherUserId) {
-      return res.status(400).json({ message: "Other user not found" });
-    }
-    const user = await User.findById(userId).select("friends");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    if (user.friends.includes(otherUserId)) {
-      return res
-        .status(200)
-        .json({ message: "Users are friends", areFriends: true });
-    }
+export const searchUser = asyncHandler(async (req, res) => {
+  const { query } = req.body;
+  if (!query) {
+    throw new ApiError(400, "Query not found");
+  }
+
+  const searchQuery = query.trim();
+  if (!searchQuery) {
+    throw new ApiError(400, "Query not found");
+  }
+
+  const users = await User.find({
+    $text: { $search: searchQuery },
+  })
+    .select("-password")
+    .limit(20);
+
+  return res.status(200).json(new ApiResponse(200, users, "Users found"));
+});
+
+export const areFriends = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const otherUserId = req.params.id;
+  if (!otherUserId) {
+    throw new ApiError(404, "Other user not found");
+  }
+  const user = await User.findById(userId).select("friends");
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const areFriends = user.friends.some(
+    (friendId) => friendId.toString() === otherUserId,
+  );
+  return res.status(200).json(new ApiResponse(200, { areFriends }, "Success"));
+});
+
+export const getFriendList = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  const userDetails = await User.findById(userId)
+    .select("friends")
+    .populate("friends", "userName firstName lastName email");
+
+  if (!userDetails) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { friends: userDetails.friends },
+        "Friend list fetched",
+      ),
+    );
+});
+
+export const removeFriend = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { otherUserId } = req.body;
+
+  if (!otherUserId) {
+    throw new ApiError(400, "User ID is required");
+  }
+
+  if (userId === otherUserId) {
+    throw new ApiError(400, "Invalid operation");
+  }
+
+  const user = await User.findById(userId).select("friends");
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const areFriends = user.friends.some(
+    (friendId) => friendId.toString() === otherUserId,
+  );
+
+  if (!areFriends) {
+    throw new ApiError(400, "Users not friends");
+  }
+
+  await Promise.all([
+    User.findByIdAndUpdate(userId, { $pull: { friends: otherUserId } }),
+    User.findByIdAndUpdate(otherUserId, { $pull: { friends: userId } }),
+  ]);
+
+  return res.status(200).json(new ApiResponse(200, null, "Friend removed successfully"));
+});
+
+export const sendReq = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { otherUserId } = req.body;
+
+  if (!otherUserId) {
+    throw new ApiError(400, "Other user Id required");
+  }
+  if (userId === otherUserId) {
     return res
-      .status(200)
-      .json({ message: "Users are not friends", areFriends: false });
-  } catch (error) {
-    console.error("Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Error in checking friendship status" });
+      .status(400)
+      .json({ message: "Cannot send friend request to yourself" });
   }
-};
 
-export const sendReq = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { otherUser } = req.body;
+  // const [user, otherUserDetails] = await Promise.all([
+  //   User.findById(userId).select(
+  //     "friends pendingFriendReqSent pendingFriendReq",
+  //   ),
+  //   User.findById(otherUser).select(
+  //     "friends pendingFriendReq pendingFriendReqSent",
+  //   ),
+  // ]);
 
-    if (!otherUser) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-    if (userId === otherUser) {
-      return res
-        .status(400)
-        .json({ message: "Cannot send friend request to yourself" });
-    }
+  const user = await User.findById(userId).select("friends");
 
-    const [user, otherUserDetails] = await Promise.all([
-      User.findById(userId).select("friends pendingFriendReqSent pendingFriendReq"),
-      User.findById(otherUser).select("friends pendingFriendReq pendingFriendReqSent"),
-    ]);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!otherUserDetails) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.friends.includes(otherUser)) {
-      return res.status(400).json({ message: "Already friends" });
-    }
-
-    if (user.pendingFriendReqSent.includes(otherUser)) {
-      return res.status(400).json({ message: "Friend request already sent" });
-    }
-
-    if (user.pendingFriendReq.includes(otherUser)) {
-      return res.status(400).json({
-        message: "This user has already sent you a friend request. Accept it.",
-      });
-    }
-
-    await Promise.all([
-      User.findByIdAndUpdate(otherUser, {
-        $push: { pendingFriendReq: userId },
-      }),
-      User.findByIdAndUpdate(userId, {
-        $push: { pendingFriendReqSent: otherUser },
-      }),
-    ]);
-
-    return res.status(200).json({ message: "Friend request sent successfully" });
-  } catch (error) {
-    console.error("Error : ", error);
-    return res.status(500).json({ message: "Error in sending friend request" });
+  const areFriends = user.friends.some(
+    (friendId) => friendId.toString() === otherUserId,
+  );
+  if (areFriends) {
+    return res.status(400).json({ message: "Already friends" });
   }
-};
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  if (!otherUserDetails) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  if (user.pendingFriendReqSent.includes(otherUserId)) {
+    return res.status(400).json({ message: "Friend request already sent" });
+  }
+
+  if (user.pendingFriendReq.includes(otherUserId)) {
+    return res.status(400).json({
+      message: "This user has already sent you a friend request. Accept it.",
+    });
+  }
+
+  await Promise.all([
+    User.findByIdAndUpdate(otherUserId, {
+      $push: { pendingFriendReq: userId },
+    }),
+    User.findByIdAndUpdate(userId, {
+      $push: { pendingFriendReqSent: otherUserId },
+    }),
+  ]);
+
+  return res.status(200).json({ message: "Friend request sent successfully" });
+});
 export const retractReq = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -273,42 +310,6 @@ export const declineReq = async (req, res) => {
     return res.status(500).json({ message: "Error in sending friend request" });
   }
 };
-export const removeFriend = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { otherUser } = req.body;
-
-    if (!otherUser) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-
-    if (userId === otherUser) {
-      return res.status(400).json({ message: "Invalid operation" });
-    }
-
-    const [user, otherUserDetails] = await Promise.all([
-      User.findById(userId).select("friends"),
-      User.findById(otherUser).select("friends"),
-    ]);
-
-    if (!user || !otherUserDetails) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!user.friends.includes(otherUser)) {
-      return res.status(400).json({ message: "Not friends" });
-    }
-
-    await Promise.all([
-      User.findByIdAndUpdate(userId, { $pull: { friends: otherUser } }),
-      User.findByIdAndUpdate(otherUser, { $pull: { friends: userId } }),
-    ]);
-
-    return res.status(200).json({ message: "Friend removed successfully" });
-  } catch (error) {
-    return res.status(500).json({ message: "Error in sending friend request" });
-  }
-};
 
 export const relationWithUser = async (req, res) => {
   try {
@@ -326,7 +327,7 @@ export const relationWithUser = async (req, res) => {
     }
 
     const user = await User.findById(userId).select(
-      "friends pendingFriendReq pendingFriendReqSent"
+      "friends pendingFriendReq pendingFriendReqSent",
     );
 
     if (!user) {
@@ -366,27 +367,5 @@ export const relationWithUser = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error in checking friendship status" });
-  }
-};
-
-export const getFriendList = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const userDetails = await User.findById(userId).populate(
-      "friends",
-      "username fName lName email"
-    );
-
-    if (!userDetails) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    return res.status(200).json({
-      message: "Friend list fetched successfully",
-      friends: userDetails.friends,
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Error in fetching friend list"});
   }
 };

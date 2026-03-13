@@ -32,14 +32,18 @@ export const searchUser = asyncHandler(async (req, res) => {
   if (!query) {
     throw new ApiError(400, "Query not found");
   }
-
+  // console.log(query)
   const searchQuery = query.trim();
   if (!searchQuery) {
     throw new ApiError(400, "Query not found");
   }
 
   const users = await User.find({
-    $text: { $search: searchQuery },
+    $or: [
+      { userName: { $regex: searchQuery, $options: "i" } },
+      { firstName: { $regex: searchQuery, $options: "i" } },
+      { lastName: { $regex: searchQuery, $options: "i" } },
+    ],
   })
     .select("-password")
     .limit(20);
@@ -98,25 +102,22 @@ export const removeFriend = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid operation");
   }
 
-  const user = await User.findById(userId).select("friends");
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
-
-  const areFriends = user.friends.some(
-    (friendId) => friendId.toString() === otherUserId,
-  );
-
-  if (!areFriends) {
-    throw new ApiError(400, "Users not friends");
-  }
+  // If they are not friends, pull will handle that case as well.
 
   await Promise.all([
     User.findByIdAndUpdate(userId, { $pull: { friends: otherUserId } }),
     User.findByIdAndUpdate(otherUserId, { $pull: { friends: userId } }),
+    FriendRequest.findOneAndDelete({
+      $or: [
+        { sender: userId, receiver: otherUserId },
+        { sender: otherUserId, receiver: userId },
+      ],
+    }),
   ]);
 
-  return res.status(200).json(new ApiResponse(200, null, "Friend removed successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Friend removed successfully"));
 });
 
 export const sendReq = asyncHandler(async (req, res) => {
@@ -127,245 +128,186 @@ export const sendReq = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Other user Id required");
   }
   if (userId === otherUserId) {
-    return res
-      .status(400)
-      .json({ message: "Cannot send friend request to yourself" });
+    throw new ApiError(400, "Cannot send friend request to yourself");
   }
 
-  // const [user, otherUserDetails] = await Promise.all([
-  //   User.findById(userId).select(
-  //     "friends pendingFriendReqSent pendingFriendReq",
-  //   ),
-  //   User.findById(otherUser).select(
-  //     "friends pendingFriendReq pendingFriendReqSent",
-  //   ),
-  // ]);
+  // const user = await User.findById(userId).select("friends");
 
-  const user = await User.findById(userId).select("friends");
+  // if (!user) {
+  //   return res.status(404).json({ message: "User not found" });
+  // }
+  // const areFriends = user.friends.some(
+  //   (friendId) => friendId.toString() === otherUserId,
+  // );
 
-  const areFriends = user.friends.some(
-    (friendId) => friendId.toString() === otherUserId,
-  );
-  if (areFriends) {
-    return res.status(400).json({ message: "Already friends" });
+  // if (areFriends) {
+  //   throw new ApiError(400, "Already friends");
+  // }
+
+  const friendReqSent = await FriendRequest.findOne({
+    $or: [
+      { sender: userId, receiver: otherUserId },
+      { sender: otherUserId, receiver: userId },
+    ],
+  });
+
+  if (friendReqSent?.status === "pending") {
+    throw new ApiError(400, "Request already there");
+  }
+  if (friendReqSent?.status === "accepted") {
+    throw new ApiError(400, "Already friends");
   }
 
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+  const FriendReq = new FriendRequest({
+    sender: userId,
+    receiver: otherUserId,
+  });
+  await FriendReq.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Friend Request Send successfully"));
+});
+
+export const retractReq = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { otherUserId } = req.body;
+
+  if (!otherUserId) {
+    throw new ApiError(404, "other user not found");
+  }
+  if (userId === otherUserId) {
+    throw new ApiError(400, "Same user");
   }
 
-  if (!otherUserDetails) {
-    return res.status(404).json({ message: "User not found" });
+  const friendReqSent = await FriendRequest.findOne({
+    $or: [
+      { sender: userId, receiver: otherUserId },
+      { sender: otherUserId, receiver: userId },
+    ],
+  });
+
+  if (!friendReqSent) {
+    throw new ApiError(400, "No Request");
   }
-  if (user.pendingFriendReqSent.includes(otherUserId)) {
-    return res.status(400).json({ message: "Friend request already sent" });
+  if (friendReqSent?.status === "accepted") {
+    throw new ApiError(400, "Already friends");
   }
 
-  if (user.pendingFriendReq.includes(otherUserId)) {
-    return res.status(400).json({
-      message: "This user has already sent you a friend request. Accept it.",
-    });
+  await FriendRequest.deleteOne({
+    sender: userId,
+    receiver: otherUserId,
+    status: "pending",
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Friend request retracted successfully"));
+});
+
+export const acceptReq = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { otherUserId } = req.body;
+
+  if (!otherUserId) {
+    throw new ApiError(404, "Other user not found");
+  }
+
+  if (userId === otherUserId) {
+    throw new ApiError(400, "Same user");
+  }
+
+  const pendingReq = await FriendRequest.findOne({
+    sender: otherUserId,
+    receiver: userId,
+    status: "pending",
+  });
+
+  if (!pendingReq) {
+    throw new ApiError(400, "No pending request");
   }
 
   await Promise.all([
-    User.findByIdAndUpdate(otherUserId, {
-      $push: { pendingFriendReq: userId },
-    }),
     User.findByIdAndUpdate(userId, {
-      $push: { pendingFriendReqSent: otherUserId },
+      $push: { friends: otherUserId },
+    }),
+    User.findByIdAndUpdate(otherUserId, {
+      $push: { friends: userId },
+    }),
+    FriendRequest.findByIdAndUpdate(pendingReq._id, {
+      status: "accepted",
     }),
   ]);
 
-  return res.status(200).json({ message: "Friend request sent successfully" });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Friend request accepted"));
 });
-export const retractReq = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { otherUser } = req.body;
 
-    if (!otherUser) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-    if (userId === otherUser) {
-      return res.status(400).json({ message: "Invalid operation" });
-    }
+export const declineReq = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { otherUserId } = req.body;
 
-    const [user, otherUserDetails] = await Promise.all([
-      User.findById(userId).select("friends pendingFriendReqSent"),
-      User.findById(otherUser).select("friends pendingFriendReq"),
-    ]);
-
-    if (!user || !otherUserDetails) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.friends.includes(otherUser)) {
-      return res.status(400).json({ message: "Already friends" });
-    }
-    if (!user.pendingFriendReqSent.includes(otherUser)) {
-      return res.status(400).json({ message: "No friend request to retract" });
-    }
-    await Promise.all([
-      User.findByIdAndUpdate(otherUser, {
-        $pull: { pendingFriendReq: userId },
-      }),
-      User.findByIdAndUpdate(userId, {
-        $pull: { pendingFriendReqSent: otherUser },
-      }),
-    ]);
-
-    return res
-      .status(200)
-      .json({ message: "Friend request retracted successfully" });
-  } catch (error) {
-    return res.status(500).json({ message: "Error in sending friend request" });
+  if (!otherUserId) {
+    throw new ApiError(404, "Other user not found");
   }
-};
-export const acceptReq = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { otherUser } = req.body;
 
-    if (!otherUser) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-
-    if (userId === otherUser) {
-      return res.status(400).json({ message: "Invalid operation" });
-    }
-
-    const [user, otherUserDetails] = await Promise.all([
-      User.findById(userId).select("friends pendingFriendReq"),
-      User.findById(otherUser).select("friends pendingFriendReqSent"),
-    ]);
-
-    if (!user || !otherUserDetails) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.friends.includes(otherUser)) {
-      return res.status(400).json({ message: "Already friends" });
-    }
-
-    if (!user.pendingFriendReq.includes(otherUser)) {
-      return res.status(400).json({ message: "No friend request to accept" });
-    }
-    await Promise.all([
-      User.findByIdAndUpdate(userId, {
-        $push: { friends: otherUser },
-        $pull: { pendingFriendReq: otherUser },
-      }),
-      User.findByIdAndUpdate(otherUser, {
-        $push: { friends: userId },
-        $pull: { pendingFriendReqSent: userId },
-      }),
-    ]);
-
-    return res
-      .status(200)
-      .json({ message: "Friend request accepted successfully" });
-  } catch (error) {
-    return res.status(500).json({ message: "Error in sending friend request" });
+  if (userId === otherUserId) {
+    throw new ApiError(400, "Same user");
   }
-};
-export const declineReq = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { otherUser } = req.body;
 
-    if (!otherUser) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
+  const pendingReq = await FriendRequest.findOne({
+    sender: otherUserId,
+    receiver: userId,
+    status: "pending",
+  });
 
-    if (userId === otherUser) {
-      return res.status(400).json({ message: "Invalid operation" });
-    }
-
-    const [user, otherUserDetails] = await Promise.all([
-      User.findById(userId).select("pendingFriendReq"),
-      User.findById(otherUser).select("pendingFriendReqSent"),
-    ]);
-
-    if (!user || !otherUserDetails) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!user.pendingFriendReq.includes(otherUser)) {
-      return res.status(400).json({ message: "No friend request to decline" });
-    }
-
-    await Promise.all([
-      User.findByIdAndUpdate(otherUser, {
-        $pull: { pendingFriendReqSent: userId },
-      }),
-      User.findByIdAndUpdate(userId, {
-        $pull: { pendingFriendReq: otherUser },
-      }),
-    ]);
-
-    return res
-      .status(200)
-      .json({ message: "Friend request declined successfully" });
-  } catch (error) {
-    return res.status(500).json({ message: "Error in sending friend request" });
+  if (!pendingReq) {
+    throw new ApiError(400, "No pending request");
   }
-};
+  await FriendRequest.findByIdAndDelete(pendingReq._id);
 
-export const relationWithUser = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const otherUserId = req.params.id;
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Friend request declined"));
+});
 
-    if (!otherUserId) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
+export const relationWithUser = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const otherUserId = req.params.id;
 
-    if (userId === otherUserId) {
-      return res
-        .status(400)
-        .json({ message: "Cannot check relation with yourself" });
-    }
-
-    const user = await User.findById(userId).select(
-      "friends pendingFriendReq pendingFriendReqSent",
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const otherUserExists = await User.exists({ _id: otherUserId });
-    if (!otherUserExists) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const status = {
-      areFriends: false,
-      requestSent: false,
-      requestReceived: false,
-    };
-
-    if (user.friends.includes(otherUserId)) {
-      status.areFriends = true;
-      return res.status(200).json({ message: "Users are friends", status });
-    }
-
-    if (user.pendingFriendReq.includes(otherUserId)) {
-      status.requestReceived = true;
-      return res
-        .status(200)
-        .json({ message: "Friend request received", status });
-    }
-
-    if (user.pendingFriendReqSent.includes(otherUserId)) {
-      status.requestSent = true;
-      return res.status(200).json({ message: "Friend request sent", status });
-    }
-
-    return res.status(200).json({ message: "No relation", status });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error in checking friendship status" });
+  if (!otherUserId) {
+    throw new ApiError(400, "User ID is required");
   }
-};
+
+  if (userId === otherUserId) {
+    throw new ApiError(400, "Cannot check relation with yourself");
+  }
+
+  const friendStatus = {
+    areFriends: false,
+    requestSent: false,
+    requestReceived: false,
+  };
+
+  const friendReq = await FriendRequest.findOne({
+    $or: [
+      { sender: userId, receiver: otherUserId },
+      { sender: otherUserId, receiver: userId },
+    ],
+  });
+
+  if (friendReq?.status === "accepted") {
+    friendStatus.areFriends = true;
+  } else if (friendReq?.status === "pending") {
+    if (friendReq?.sender.toString() === userId) {
+      friendStatus.requestSent = true;
+    } else if (friendReq?.sender.toString() === otherUserId) {
+      friendStatus.requestReceived = true;
+    }
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, friendStatus, "Relation fetched successfully"));
+});
